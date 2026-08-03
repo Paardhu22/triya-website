@@ -9,12 +9,12 @@ import { heroProperties } from "@/data/properties";
  * viewport without scrolling. Order matches `heroProperties`.
  */
 const frames = [
-  { width: "15%", height: "22vh" },
-  { width: "17%", height: "18vh" },
-  { width: "13%", height: "29vh" },
-  { width: "14%", height: "17vh" },
-  { width: "18%", height: "24vh" },
-  { width: "19%", height: "20vh" },
+  { width: "15%", height: "36vh" },
+  { width: "17%", height: "32vh" },
+  { width: "13%", height: "43vh" },
+  { width: "14%", height: "31vh" },
+  { width: "18%", height: "38vh" },
+  { width: "19%", height: "34vh" },
 ];
 
 export default function Hero() {
@@ -35,7 +35,7 @@ export default function Hero() {
             return (
               <figure
                 key={property.slug}
-                className="animate-unveil group relative h-[var(--h)] w-[62vw] shrink-0 md:w-[var(--w)] md:shrink"
+                className="animate-unveil group relative h-[var(--h)] w-[62vw] shrink-0 md:w-[var(--w)] md:shrink md:grow"
                 style={
                   {
                     "--w": frame.width,
@@ -60,20 +60,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Statement */}
-      <div className="relative mt-[5vh] px-5 sm:px-8">
-        <span className="animate-rise absolute top-1 left-5 text-[11px] tracking-[-0.01em] text-muted sm:left-8 [animation-delay:700ms]">
-          2016
-        </span>
-        <span className="animate-rise absolute top-1 right-5 text-[11px] tracking-[-0.01em] text-muted sm:right-8 [animation-delay:700ms]">
-          2025
-        </span>
-
-        <p className="animate-rise mx-auto max-w-[46rem] text-center text-[clamp(1.15rem,min(2.6vw,3.4vh),2.1rem)] leading-[1.1] font-bold tracking-[-0.035em] [animation-delay:560ms]">
-          We manage hotels and residences built around comfort, consistency,
-          and quietly considered living
-        </p>
-      </div>
     </section>
   );
 }

@@ -51,7 +51,7 @@ export default function PropertyOverlay({
             </div>
           </div>
 
-          <div className="h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div data-lenis-prevent className="h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {/* Hero — the close button sits over this, so it stays white. */}
             <div className="relative h-[62vh] min-h-[380px] w-full overflow-hidden bg-line">
               <motion.div

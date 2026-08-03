@@ -44,7 +44,7 @@ function CategoryBand({
       onClick={() => onOpen(category.kind)}
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
+      viewport={{ once: false, amount: 0.25 }}
       transition={{ duration: 0.9, ease: EASE, delay: index * 0.08 }}
       aria-label={`Browse ${category.label}`}
       className="group focus-ring relative block h-[62vh] w-full overflow-hidden text-left md:h-[100dvh]"

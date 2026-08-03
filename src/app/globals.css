@@ -166,9 +166,44 @@ body {
   animation: unveil 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Typewriter cursor — sharp on/off so it's never caught mid-fade in a screenshot. */
+@keyframes cursor-blink {
+  from, to { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: cursor-blink 1.1s step-end infinite;
+}
+
+/* Per-character colour sweep: light-gray → terracotta hint → foreground */
+@keyframes char-reveal {
+  0%   { color: #c6c4c1; }
+  28%  { color: rgba(194, 83, 44, 0.55); }
+  100% { color: var(--foreground); }
+}
+
+.char-reveal {
+  animation: char-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Cursor trail card — pop in, hold, fade out. --rot is set per-card inline. */
+@keyframes cursor-card-in {
+  from { transform: translate(-50%, -50%) rotate(var(--rot)) scale(0); }
+  70%  { transform: translate(-50%, -50%) rotate(var(--rot)) scale(1.05); }
+  to   { transform: translate(-50%, -50%) rotate(var(--rot)) scale(1); }
+}
+
+@keyframes cursor-card-out {
+  from { opacity: 1; transform: translate(-50%, -50%) rotate(var(--rot)) scale(1); }
+  to   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--rot)) scale(0.85); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .cursor-blink,
   .animate-rise,
-  .animate-unveil {
+  .animate-unveil,
+  .char-reveal {
     animation: none;
   }
 }

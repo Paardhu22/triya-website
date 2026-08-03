@@ -44,7 +44,7 @@ function Rise({
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
+      viewport={{ once: false, amount: 0.3 }}
       transition={{ duration: 0.9, ease: EASE, delay }}
       className={className}
     >
@@ -104,14 +104,14 @@ function Frame({
       ref={ref}
       initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
       whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
-      viewport={{ once: true, amount: 0.2 }}
+      viewport={{ once: false, amount: 0.2 }}
       transition={{ duration: 1.25, ease: EASE, delay }}
       className={cn("overflow-hidden bg-line", className)}
     >
       <motion.div
         initial={{ y: "-22%" }}
         whileInView={{ y: "0%" }}
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 1.25, ease: EASE, delay }}
         className="absolute inset-0"
       >
@@ -323,6 +323,7 @@ export default function PropertyListOverlay({
               measurements are taken against. */}
           <div
             ref={scroller}
+            data-lenis-prevent
             className="relative h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {items.map((property, i) => (

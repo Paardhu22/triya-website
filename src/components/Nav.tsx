@@ -4,22 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
 
-import { EASE } from "@/lib/motion";
+import { EASE, EASE_UI } from "@/lib/motion";
+import { useLenis } from "./SmoothScrollProvider";
 import MenuOverlay from "./ui/MenuOverlay";
 import MenuToggle from "./ui/MenuToggle";
 
-/**
- * The bar carries nothing but the wordmark and the toggle — every destination
- * lives in the takeover menu.
- *
- * It never paints a background. Sections alternate cream and ink the whole way
- * down, so any panel colour would be wrong against roughly half of it. Instead
- * the bar blends in difference mode: white content over an ink section stays
- * white, over cream it inverts to near-black. Nothing changes state on scroll
- * because there is no state to change.
- */
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const lenisRef = useLenis();
   const { scrollYProgress, scrollY } = useScroll();
   const progress = useSpring(scrollYProgress, {
     stiffness: 120,
@@ -27,12 +19,13 @@ export default function Nav() {
     restDelta: 0.001,
   });
 
-  // The toggle hides once you've scrolled past the hero and are heading
-  // further down, and reappears the moment you scroll back up — regardless
-  // of how far down that reversal starts.
-  const [toggleHidden, setToggleHidden] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
   const lastY = useRef(0);
   const heroHeight = useRef(0);
+
+  // After the page-load entrance animation completes, switch to the fast
+  // scroll-responsive transition so hide/show feels instant, not sluggish.
+  const hasEntered = useRef(false);
 
   useEffect(() => {
     const measure = () => {
@@ -48,25 +41,31 @@ export default function Nav() {
     const scrollingDown = latest > previous;
     lastY.current = latest;
 
-    if (latest <= heroHeight.current) {
-      setToggleHidden(false);
+    const halfHero = heroHeight.current / 2;
+
+    if (latest < halfHero) {
+      // Top half of the hero — always visible.
+      setNavHidden(false);
     } else if (scrollingDown) {
-      setToggleHidden(true);
+      // Past the halfway mark scrolling down — hide the entire bar.
+      setNavHidden(true);
     } else {
-      setToggleHidden(false);
+      // Any upward scroll — bring the bar back.
+      setNavHidden(false);
     }
   });
 
-  // Navigating closes the panel from the link handler itself (see MenuOverlay),
-  // so there is no route-watching effect here.
-
-  // A takeover covers the page; the page behind it should not keep scrolling.
+  // Pause Lenis so the page can't scroll behind the open menu overlay.
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (open) {
+      lenisRef.current?.stop();
+    } else {
+      lenisRef.current?.start();
+    }
     return () => {
-      document.body.style.overflow = "";
+      lenisRef.current?.start();
     };
-  }, [open]);
+  }, [open, lenisRef]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -78,18 +77,28 @@ export default function Nav() {
 
   return (
     <>
-      {/* Kept outside the blended header — difference mode would turn terracotta
-          into a cyan that belongs to no palette. */}
+      {/* Progress bar lives outside the blended header — difference mode
+          would turn terracotta into a cyan that belongs to no palette. */}
       <motion.div
         className="fixed inset-x-0 top-0 z-[45] h-[2px] origin-left bg-terracotta"
         style={{ scaleX: progress }}
       />
 
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 1, ease: EASE, delay: 0.2 }}
-        style={{ mixBlendMode: "difference" }}
+        initial={{ y: -72, opacity: 0 }}
+        animate={navHidden ? { y: -72, opacity: 0 } : { y: 0, opacity: 1 }}
+        transition={
+          hasEntered.current
+            ? { duration: 0.38, ease: EASE_UI }
+            : { duration: 0.9, ease: EASE, delay: 0.2 }
+        }
+        onAnimationComplete={() => {
+          hasEntered.current = true;
+        }}
+        style={{
+          mixBlendMode: "difference",
+          pointerEvents: navHidden ? "none" : "auto",
+        }}
         className="fixed inset-x-0 top-0 z-50"
       >
         <div className="section-shell flex h-[72px] items-center justify-between">
@@ -100,16 +109,7 @@ export default function Nav() {
             </span>
           </Link>
 
-          <motion.div
-            animate={{
-              opacity: toggleHidden ? 0 : 1,
-              y: toggleHidden ? -16 : 0,
-            }}
-            transition={{ duration: 0.4, ease: EASE }}
-            style={{ pointerEvents: toggleHidden ? "none" : "auto" }}
-          >
-            <MenuToggle onClick={() => setOpen(true)} expanded={open} />
-          </motion.div>
+          <MenuToggle onClick={() => setOpen(true)} expanded={open} />
         </div>
       </motion.header>
 
