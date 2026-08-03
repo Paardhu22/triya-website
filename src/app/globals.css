@@ -2,10 +2,17 @@
 
 /* --------------------------------------------------------------------------
    Gustavo — the brand display face.
-   Drop the licensed files into /public/fonts and these @font-face rules pick
-   them up automatically. Until then the stack falls through to Archivo
-   (loaded in layout.tsx), which is the closest open grotesque.
-   -------------------------------------------------------------------------- */
+
+   The @font-face rules are commented out because the licensed files are not in
+   the repo yet, and a live @font-face pointing at a missing URL makes the
+   browser request it on every page load and 404. "Gustavo" is still first in
+   --font-display below, so it costs nothing to leave the stack alone: with no
+   @font-face declared the name simply does not resolve and the browser falls
+   through to Archivo (loaded in layout.tsx), the closest open grotesque.
+
+   To switch the site over: drop Gustavo-Medium.woff2 and Gustavo-Bold.woff2
+   into /public/fonts and uncomment this block. Nothing else changes.
+
 @font-face {
   font-family: "Gustavo";
   src: url("/fonts/Gustavo-Medium.woff2") format("woff2");
@@ -21,6 +28,7 @@
   font-style: normal;
   font-display: swap;
 }
+   -------------------------------------------------------------------------- */
 
 :root {
   --background: #f7f6f4;
@@ -60,6 +68,18 @@ body {
   color: var(--foreground);
   font-family: var(--font-display);
   font-synthesis-weight: none;
+}
+
+/* Scrollbar hidden everywhere — Lenis drives scroll, so the native track is
+   just chrome. Content still fills the full viewport width since scrolling
+   itself is untouched, only the track's rendering is suppressed. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 ::selection {
@@ -166,16 +186,6 @@ body {
   animation: unveil 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Typewriter cursor — sharp on/off so it's never caught mid-fade in a screenshot. */
-@keyframes cursor-blink {
-  from, to { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
-.cursor-blink {
-  animation: cursor-blink 1.1s step-end infinite;
-}
-
 /* Per-character colour sweep: light-gray → terracotta hint → foreground */
 @keyframes char-reveal {
   0%   { color: #c6c4c1; }
@@ -187,20 +197,7 @@ body {
   animation: char-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Cursor trail card — pop in, hold, fade out. --rot is set per-card inline. */
-@keyframes cursor-card-in {
-  from { transform: translate(-50%, -50%) rotate(var(--rot)) scale(0); }
-  70%  { transform: translate(-50%, -50%) rotate(var(--rot)) scale(1.05); }
-  to   { transform: translate(-50%, -50%) rotate(var(--rot)) scale(1); }
-}
-
-@keyframes cursor-card-out {
-  from { opacity: 1; transform: translate(-50%, -50%) rotate(var(--rot)) scale(1); }
-  to   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--rot)) scale(0.85); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .cursor-blink,
   .animate-rise,
   .animate-unveil,
   .char-reveal {

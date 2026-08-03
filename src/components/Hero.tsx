@@ -1,6 +1,8 @@
 import Image from "next/image";
 
 import { heroProperties } from "@/data/properties";
+import { SHUFFLE_PRESET } from "@/lib/shuffle";
+import Shuffle from "./ui/Shuffle";
 
 /**
  * Per-frame layout for the strip. Every frame sits on the same baseline and
@@ -23,9 +25,15 @@ export default function Hero() {
   // fold.
   return (
     <section className="flex min-h-[calc(100dvh-72px)] flex-1 flex-col justify-between overflow-hidden pt-[clamp(4.5rem,13vh,10rem)] pb-[5vh]">
-      <h1 className="animate-rise px-5 text-[clamp(2.75rem,min(10.5vw,16vh),11rem)] leading-[0.82] font-medium tracking-[-0.045em] sm:px-8">
-        Triya Group
-      </h1>
+      {/* `animate-rise` is gone — the shuffle is the entrance now, and running
+          both would translate the strips mid-measure. */}
+      <Shuffle
+        {...SHUFFLE_PRESET}
+        tag="h1"
+        text="Triya Group"
+        textAlign="left"
+        className="px-5 text-[clamp(2.75rem,min(10.5vw,16vh),11rem)] leading-[0.82] font-medium tracking-[-0.045em] sm:px-8"
+      />
 
       {/* Property strip — `items-end` is what puts every frame on one baseline. */}
       <div className="mt-[5vh]">

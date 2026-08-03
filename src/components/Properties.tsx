@@ -12,7 +12,9 @@ import {
   type PropertyKind,
 } from "@/data/properties";
 import { EASE } from "@/lib/motion";
+import { SHUFFLE_HOVER_PRESET, SHUFFLE_PRESET } from "@/lib/shuffle";
 import PropertyListOverlay from "./ui/PropertyListOverlay";
+import Shuffle from "./ui/Shuffle";
 import PropertyOverlay from "./ui/PropertyOverlay";
 
 /**
@@ -47,7 +49,7 @@ function CategoryBand({
       viewport={{ once: false, amount: 0.25 }}
       transition={{ duration: 0.9, ease: EASE, delay: index * 0.08 }}
       aria-label={`Browse ${category.label}`}
-      className="group focus-ring relative block h-[62vh] w-full overflow-hidden text-left md:h-[100dvh]"
+      className="group focus-ring relative block h-[62vh] w-full overflow-hidden rounded-2xl text-left md:h-[100dvh]"
     >
       <Image
         src={category.image}
@@ -59,8 +61,6 @@ function CategoryBand({
       {/* Dark enough that the type holds on any placeholder photograph. */}
       <div className="absolute inset-0 bg-ink/60 transition-colors duration-700 group-hover:bg-ink/50" />
 
-      {/* Own gutter rather than `.section-shell` — each half is its own box,
-          and the outer one only matches the page gutter on its outer edge. */}
       <div className="relative flex h-full flex-col justify-between px-5 py-10 sm:px-8 sm:py-12">
         <p className="text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase">
           {String(index + 1).padStart(2, "0")} —{" "}
@@ -70,9 +70,13 @@ function CategoryBand({
         <div>
           {/* Half-width columns, so this tops out well below the full-bleed
               size the same word could carry across the whole page. */}
-          <h3 className="text-[clamp(2.25rem,5.2vw,5rem)] leading-[0.9] font-bold tracking-[-0.045em] text-white uppercase">
-            {category.label}
-          </h3>
+          <Shuffle
+            {...SHUFFLE_PRESET}
+            tag="h3"
+            text={category.label}
+            textAlign="left"
+            className="text-[clamp(2.25rem,5.2vw,5rem)] leading-[0.9] font-bold tracking-[-0.045em] text-white uppercase"
+          />
 
           <p className="mt-6 max-w-[42ch] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-[1.6] tracking-[-0.01em] text-white/65 text-balance">
             {category.blurb}
@@ -83,7 +87,12 @@ function CategoryBand({
             aria-hidden="true"
             className="mt-9 inline-flex items-center gap-3 text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase transition-colors duration-300 group-hover:text-white"
           >
-            Browse
+            <Shuffle
+              {...SHUFFLE_HOVER_PRESET}
+              tag="span"
+              text="Browse"
+              textAlign="left"
+            />
             <svg
               viewBox="0 0 24 24"
               className="h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:translate-x-1"
@@ -145,9 +154,11 @@ export default function Properties() {
         </p>
       </div>
 
-      {/* Full-bleed, split down the middle — residences left, hotels right,
-          each holding a full screen. They stack on narrow windows. */}
-      <div className="mt-[8vh] grid gap-3 md:grid-cols-2">
+      {/* Split down the middle — residences left, hotels right, each holding
+          a full screen. Inset from the page edge with a wider gap between
+          the two so the images read as separate cards. They stack on narrow
+          windows. */}
+      <div className="section-shell mt-[8vh] grid gap-4 sm:gap-6 md:grid-cols-2">
         {categories.map((category, i) => (
           <CategoryBand
             key={category.kind}
