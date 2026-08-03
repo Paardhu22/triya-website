@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* --------------------------------------------------------------------------
+   Gustavo — the brand display face.
+   Drop the licensed files into /public/fonts and these @font-face rules pick
+   them up automatically. Until then the stack falls through to Archivo
+   (loaded in layout.tsx), which is the closest open grotesque.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Gustavo";
+  src: url("/fonts/Gustavo-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gustavo";
+  src: url("/fonts/Gustavo-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #f7f6f4;
+  --foreground: #111110;
+  --muted: #8a8880;
+  --line: #e2e0db;
+
+  /* One step darker than the page — the band sections sit on this. */
+  --surface: #dddcd8;
+
+  /* Ink is the takeover panel; the three accents rotate down its list. */
+  --ink: #0b0b0a;
+  --terracotta: #c2532c;
+  --sand: #c2a578;
+  --stone: #7e93a3;
+
+  --font-display: "Gustavo", var(--font-archivo), "Helvetica Neue", Arial,
+    sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-terracotta: var(--terracotta);
+  --color-sand: var(--sand);
+  --color-stone: var(--stone);
+  --font-sans: var(--font-display);
+  --font-display: var(--font-display);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-display);
+  font-synthesis-weight: none;
+}
+
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* The single horizontal gutter every full-width section aligns to. */
+.section-shell {
+  width: 100%;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .section-shell {
+    padding-inline: 2rem;
+  }
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Menu toggle — two rules, spreading apart on hover rather than morphing.
+   -------------------------------------------------------------------------- */
+.menu-line {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.menu-toggle:hover .menu-line-top,
+.menu-toggle:focus-visible .menu-line-top {
+  transform: translateY(-0.2rem);
+}
+
+.menu-toggle:hover .menu-line-bottom,
+.menu-toggle:focus-visible .menu-line-bottom {
+  transform: translateY(0.2rem);
+}
+
+/* Hovering one destination recedes the rest of the list. */
+.menu-list:hover .menu-link {
+  opacity: 0.3;
+}
+
+.menu-list .menu-link:hover,
+.menu-list .menu-link:focus-visible {
+  opacity: 1;
+}
+
+.menu-link {
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-line,
+  .menu-link {
+    transition: none;
+  }
+}
+
+/* Frosted pill for the menu CTA, over the ink panel. */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.liquid-glass:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Entrance choreography for the hero. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes unveil {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-rise {
+  animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-unveil {
+  animation: unveil 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-unveil {
+    animation: none;
+  }
+}
