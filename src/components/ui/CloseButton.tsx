@@ -1,14 +1,29 @@
+import { OCTAGON_PATH } from "@/lib/shapes";
+
 /**
  * The chamfered-octagon close control. The outline sits at low opacity until
  * hover, when it comes up to full and the cross turns a quarter turn.
+ *
+ * `tone` picks the text colour (and so `currentColor` for both strokes) —
+ * "light" for ink panels, "dark" for takeovers on the cream background.
  */
-export default function CloseButton({ onClick }: { onClick: () => void }) {
+export default function CloseButton({
+  onClick,
+  label = "Close menu",
+  tone = "light",
+}: {
+  onClick: () => void;
+  label?: string;
+  tone?: "light" | "dark";
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label="Close menu"
-      className="group focus-ring relative grid h-[60px] w-[60px] place-items-center text-white"
+      aria-label={label}
+      className={`group focus-ring relative grid h-[60px] w-[60px] place-items-center ${
+        tone === "light" ? "text-white" : "text-foreground"
+      }`}
     >
       <svg
         viewBox="0 0 60 60"
@@ -16,7 +31,7 @@ export default function CloseButton({ onClick }: { onClick: () => void }) {
         aria-hidden="true"
       >
         <path
-          d="M60 47.5 L47.5 60 L12.5 60 L0 47.5 L0 12.5 L12.5 0 L47.5 0 L60 12.5 Z"
+          d={OCTAGON_PATH}
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
