@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
 
 import { EASE } from "@/lib/motion";
 import MenuOverlay from "./ui/MenuOverlay";
@@ -20,11 +20,41 @@ import MenuToggle from "./ui/MenuToggle";
  */
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress, scrollY } = useScroll();
   const progress = useSpring(scrollYProgress, {
     stiffness: 120,
     damping: 30,
     restDelta: 0.001,
+  });
+
+  // The toggle hides once you've scrolled past the hero and are heading
+  // further down, and reappears the moment you scroll back up — regardless
+  // of how far down that reversal starts.
+  const [toggleHidden, setToggleHidden] = useState(false);
+  const lastY = useRef(0);
+  const heroHeight = useRef(0);
+
+  useEffect(() => {
+    const measure = () => {
+      heroHeight.current = window.innerHeight - 72;
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = lastY.current;
+    const scrollingDown = latest > previous;
+    lastY.current = latest;
+
+    if (latest <= heroHeight.current) {
+      setToggleHidden(false);
+    } else if (scrollingDown) {
+      setToggleHidden(true);
+    } else {
+      setToggleHidden(false);
+    }
   });
 
   // Navigating closes the panel from the link handler itself (see MenuOverlay),
@@ -70,7 +100,16 @@ export default function Nav() {
             </span>
           </Link>
 
-          <MenuToggle onClick={() => setOpen(true)} expanded={open} />
+          <motion.div
+            animate={{
+              opacity: toggleHidden ? 0 : 1,
+              y: toggleHidden ? -16 : 0,
+            }}
+            transition={{ duration: 0.4, ease: EASE }}
+            style={{ pointerEvents: toggleHidden ? "none" : "auto" }}
+          >
+            <MenuToggle onClick={() => setOpen(true)} expanded={open} />
+          </motion.div>
         </div>
       </motion.header>
 
