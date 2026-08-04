@@ -1,10 +1,6 @@
-import { OCTAGON_PATH } from "@/lib/shapes";
-
 /**
- * The forward control on each listing band — same chamfered octagon as
- * `CloseButton`, with an arrow instead of a cross. Everything reacts to hover
- * on the button as a whole: the outline comes up to full, the arrow slides,
- * and the label brightens.
+ * The forward control on each listing band. Everything reacts to hover
+ * on the button as a whole: the arrow slides, and the label brightens.
  *
  * Colour comes from `currentColor`, so the caller sets the tone by putting a
  * text colour on this element or an ancestor.
@@ -27,20 +23,6 @@ export default function ArrowButton({
       className="group focus-ring inline-flex items-center gap-4"
     >
       <span className="relative grid h-[54px] w-[54px] shrink-0 place-items-center">
-        <svg
-          viewBox="0 0 60 60"
-          className="absolute inset-0 h-full w-full"
-          aria-hidden="true"
-        >
-          <path
-            d={OCTAGON_PATH}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            className="opacity-30 transition-opacity duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:opacity-100"
-          />
-        </svg>
-
         <svg
           viewBox="0 0 24 24"
           className="relative h-[18px] w-[18px] transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:translate-x-[3px]"
