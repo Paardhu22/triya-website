@@ -29,11 +29,21 @@ export default function Nav() {
 
   useEffect(() => {
     const measure = () => {
-      heroHeight.current = window.innerHeight - 72;
+      // Read the bar height from the same custom property the CSS uses, rather
+      // than repeating the number — it differs per breakpoint.
+      const navH =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue("--nav-h"),
+        ) || 72;
+      heroHeight.current = window.innerHeight - navH;
     };
     measure();
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
+    };
   }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -84,9 +94,11 @@ export default function Nav() {
         style={{ scaleX: progress }}
       />
 
+      {/* `-100%` rather than a pixel offset, so the bar hides itself completely
+          whatever height the current breakpoint gives it. */}
       <motion.header
-        initial={{ y: -72, opacity: 0 }}
-        animate={navHidden ? { y: -72, opacity: 0 } : { y: 0, opacity: 1 }}
+        initial={{ y: "-100%", opacity: 0 }}
+        animate={navHidden ? { y: "-100%", opacity: 0 } : { y: 0, opacity: 1 }}
         transition={
           hasEntered.current
             ? { duration: 0.38, ease: EASE_UI }
@@ -101,9 +113,9 @@ export default function Nav() {
         }}
         className="fixed inset-x-0 top-0 z-50"
       >
-        <div className="section-shell flex h-[72px] items-center justify-between">
+        <div className="section-shell flex h-nav items-center justify-between">
           <Link href="/" className="focus-ring rounded">
-            <span className="text-[22px] leading-none font-bold tracking-[-0.03em] text-white">
+            <span className="text-[19px] leading-none font-bold tracking-[-0.03em] text-white sm:text-[22px]">
               triya
               <span className="font-medium text-white/70">group</span>
             </span>

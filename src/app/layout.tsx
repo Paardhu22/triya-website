@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
@@ -15,6 +15,17 @@ export const metadata: Metadata = {
   title: "Triya Group — Hotels & Managed Living",
   description:
     "Triya Group manages a portfolio of hotels and premium paying-guest residences built around comfort, consistency and considered design.",
+};
+
+/**
+ * Declared rather than left to Next's default so the intent is on the record.
+ * `maximumScale`/`userScalable` are deliberately not set: pinch-zoom is an
+ * accessibility affordance and capping it fails WCAG 1.4.4.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#f7f6f4",
 };
 
 export default function RootLayout({

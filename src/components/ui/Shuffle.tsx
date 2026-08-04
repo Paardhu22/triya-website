@@ -84,11 +84,71 @@ const Shuffle = ({
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [ready, setReady] = useState(false);
 
+  // Bumped on a real width change to force a full re-measure — see the effect
+  // below for why that is necessary and why height changes are ignored.
+  const [resizeKey, setResizeKey] = useState(0);
+
   const splitRef = useRef<GSAPSplitText | null>(null);
   const wrappersRef = useRef<HTMLElement[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const playingRef = useRef(false);
   const hoverHandlerRef = useRef<(() => void) | null>(null);
+
+  // Whether this instance has already run its entrance. A rebuild triggered by
+  // a resize must not replay it — it should land straight on the finished
+  // state, or the headings would re-shuffle every time a window edge moves.
+  const hasPlayedRef = useRef(false);
+
+  // Every strip's window is sized in *pixels* measured at build time, but the
+  // call sites set type with `clamp()` against `vw`/`svh` — so the glyphs change
+  // size whenever the viewport does, and the baked-in widths stop matching.
+  // Left alone, resizing a window or rotating a phone leaves the letters
+  // clipped and overlapping. Re-measure instead.
+  //
+  // The trigger is a `ResizeObserver` on the element plus a window listener,
+  // and the two are deduplicated by comparing a signature of the things the
+  // measurement actually depends on: the element's own width and its rendered
+  // font size. That combination is what makes this reliable —
+  //   - the observer catches anything that changes the element's box, including
+  //     causes a window listener never sees (a container being re-laid out, or
+  //     the element living inside an iframe);
+  //   - the window listener catches the reverse case, where the viewport's
+  //     *height* drives the type size (the hero caps itself with `16svh`) while
+  //     the element's width never moves;
+  //   - and the signature check discards everything else, which is what keeps a
+  //     phone's collapsing URL bar — a height-only resize storm fired during
+  //     ordinary scrolling — from rebuilding the split over and over.
+  // It also closes the feedback loop: a rebuild changes the element's height,
+  // which re-notifies the observer, whose signature is then unchanged.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let timer: ReturnType<typeof setTimeout>;
+    const sample = () =>
+      `${Math.round(el.getBoundingClientRect().width)}|${getComputedStyle(el).fontSize}`;
+    let last = sample();
+
+    const check = () => {
+      const next = sample();
+      if (next === last) return;
+      last = next;
+      clearTimeout(timer);
+      timer = setTimeout(() => setResizeKey((k) => k + 1), 150);
+    };
+
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    window.addEventListener("resize", check);
+    window.addEventListener("orientationchange", check);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", check);
+      window.removeEventListener("orientationchange", check);
+      clearTimeout(timer);
+    };
+  }, []);
 
   // Measuring character widths before the webfont swaps in would size every
   // strip to the fallback face. `fonts.ready` resolves immediately when the
@@ -441,7 +501,18 @@ const Shuffle = ({
       const create = () => {
         build();
         if (scrambleCharset) randomizeScrambles();
-        if (playOnEnter) play();
+
+        // A one-shot that has already run is being rebuilt only because the
+        // viewport changed width, so it parks at its finished state rather than
+        // shuffling again. A looping instance is never "finished" — resuming
+        // the loop is the correct behaviour for it.
+        if (playOnEnter && (!hasPlayedRef.current || loop)) {
+          hasPlayedRef.current = true;
+          play();
+        } else if (playOnEnter) {
+          cleanupToStill();
+        }
+
         armHover();
         setReady(true);
       };
@@ -454,8 +525,13 @@ const Shuffle = ({
       // any instance ScrollTrigger doesn't happen to evaluate as "entered" at
       // creation time (which for anything below the very top of the page,
       // this depends on a scroll event actually arriving first).
+      // Anything that has already played is rebuilt immediately too: waiting on
+      // a fresh ScrollTrigger would leave it invisible (the parent is
+      // `visibility: hidden` until `is-ready`) for a heading the user is
+      // currently looking at, until they happened to scroll it past the trigger
+      // line again.
       let st: ScrollTrigger | null = null;
-      if (playOnEnter) {
+      if (playOnEnter && !hasPlayedRef.current) {
         st = ScrollTrigger.create({
           trigger: el,
           start,
@@ -481,6 +557,7 @@ const Shuffle = ({
         ease,
         scrollTriggerStart,
         fontsLoaded,
+        resizeKey,
         shuffleDirection,
         shuffleTimes,
         animationMode,

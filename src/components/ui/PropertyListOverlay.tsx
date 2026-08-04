@@ -157,8 +157,8 @@ function Band({
         flipped ? "bg-ink text-white" : "bg-background text-foreground",
       )}
     >
-      <div className="section-shell flex min-h-[100dvh] items-center py-24">
-        <div className="grid w-full items-center gap-y-14 lg:grid-cols-12 lg:gap-x-10">
+      <div className="section-shell flex min-h-[100svh] items-center py-20 sm:py-24">
+        <div className="grid w-full items-center gap-y-12 sm:gap-y-14 lg:grid-cols-12 lg:gap-x-10">
           {/* Numeral and copy */}
           <div
             className={cn(
@@ -237,26 +237,30 @@ function Band({
               <Frame
                 src={property.gallery[1] ?? property.image}
                 alt={`${property.name}, ${property.location}`}
-                sizes="(max-width: 1024px) 100vw, 40vw"
+                sizes="(max-width: 1024px) 70vw, 40vw"
                 priority={index === 0}
                 delay={0.1}
                 scroller={scroller}
                 drift={44}
                 className={cn(
-                  "relative h-[min(56vh,30rem)] w-[68%]",
+                  "relative h-[min(56svh,30rem)] w-[68%]",
                   flipped ? "ml-auto" : "",
                 )}
               />
 
+              {/* The floor matters: the parallax inside travels 24px and is
+                  covered by a 26% vertical bleed, so the frame must stay above
+                  ~92px or the drift outruns the bleed and pulls a bare edge
+                  into view. 24svh alone falls under that on a landscape phone. */}
               <Frame
                 src={property.gallery[2] ?? property.image}
                 alt=""
-                sizes="(max-width: 1024px) 60vw, 25vw"
+                sizes="(max-width: 1024px) 42vw, 25vw"
                 delay={0.28}
                 scroller={scroller}
                 drift={-24}
                 className={cn(
-                  "absolute bottom-[-9%] h-[min(24vh,13rem)] w-[42%]",
+                  "absolute bottom-[-9%] h-[max(7rem,min(24svh,13rem))] w-[42%]",
                   flipped ? "left-0" : "right-0",
                 )}
               />
@@ -302,17 +306,17 @@ export default function PropertyListOverlay({
             style={{ mixBlendMode: "difference" }}
             className="pointer-events-none absolute inset-x-0 top-0 z-30"
           >
-            <div className="section-shell flex h-[72px] items-center justify-between">
+            <div className="section-shell flex h-nav items-center justify-between gap-4">
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, ease: EASE, delay: 0.45 }}
-                className="text-[11px] font-medium tracking-[0.28em] text-white uppercase"
+                className="truncate text-[10px] font-medium tracking-[0.28em] text-white uppercase sm:text-[11px]"
               >
                 {label} — {String(items.length).padStart(2, "0")}
               </motion.span>
 
-              <div className="pointer-events-auto -mr-4">
+              <div className="pointer-events-auto -mr-3 shrink-0 sm:-mr-4">
                 <CloseButton onClick={onClose} label={`Close ${label}`} />
               </div>
             </div>
@@ -324,7 +328,7 @@ export default function PropertyListOverlay({
           <div
             ref={scroller}
             data-lenis-prevent
-            className="relative h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="no-scrollbar relative h-full overflow-y-auto overscroll-contain bg-background"
           >
             {items.map((property, i) => (
               <Band

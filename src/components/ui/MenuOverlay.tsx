@@ -55,7 +55,8 @@ export default function MenuOverlay({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.35, delay: 0.15 } }}
           transition={{ duration: 0.3, ease: EASE_UI }}
-          className="fixed inset-0 z-[60] overflow-y-auto bg-ink"
+          data-lenis-prevent
+          className="no-scrollbar fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-ink"
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
@@ -63,19 +64,19 @@ export default function MenuOverlay({
           <div className="section-shell flex min-h-full flex-col">
             {/* Matches the bar geometry underneath, so the wordmark does not
                 shift when the panel drops over it. */}
-            <div className="flex h-[72px] shrink-0 items-center justify-between">
-              <span className="text-[22px] leading-none font-bold tracking-[-0.03em] text-white">
+            <div className="flex h-nav shrink-0 items-center justify-between">
+              <span className="text-[19px] leading-none font-bold tracking-[-0.03em] text-white sm:text-[22px]">
                 triya<span className="font-medium text-white/70">group</span>
               </span>
               {/* Pulled out to the gutter edge, the way the reference hangs it. */}
-              <div className="-mr-4">
+              <div className="-mr-3 sm:-mr-4">
                 <CloseButton onClick={onClose} />
               </div>
             </div>
 
             {/* The long labels ("RESIDENCES") set the column ratio — at 1fr
                 each they overrun the utility links. */}
-            <div className="mt-auto grid grid-cols-1 items-end gap-14 pt-20 pb-14 lg:grid-cols-[1.35fr_1fr]">
+            <div className="mt-auto grid grid-cols-1 items-end gap-10 pt-12 pb-10 sm:gap-14 sm:pt-20 sm:pb-14 lg:grid-cols-[1.35fr_1fr]">
               <nav className="menu-list flex flex-col">
                 {PRIMARY.map((item, i) => (
                   <div
@@ -103,7 +104,7 @@ export default function MenuOverlay({
                       <Link
                         href={item.href}
                         onClick={onClose}
-                        className="menu-link focus-ring block text-[clamp(2.25rem,7vw,6rem)] leading-[0.95] font-medium tracking-[-0.035em] whitespace-nowrap text-white uppercase"
+                        className="menu-link focus-ring block text-[clamp(2rem,7vw,6rem)] leading-[0.95] font-medium tracking-[-0.035em] whitespace-nowrap text-white uppercase"
                       >
                         {item.label}
                       </Link>
@@ -112,22 +113,25 @@ export default function MenuOverlay({
                 ))}
               </nav>
 
-              <div className="flex flex-col gap-12 lg:items-end">
+              <div className="flex flex-col gap-8 sm:gap-12 lg:items-end">
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, transition: { duration: 0.25 } }}
                   transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}
-                  className="grid grid-cols-2 gap-x-14 gap-y-3"
+                  className="grid grid-cols-2 gap-x-8 gap-y-1 sm:gap-x-14 sm:gap-y-3"
                 >
                   {SECONDARY.map((column, ci) => (
-                    <div key={ci} className="flex flex-col gap-3">
+                    <div key={ci} className="flex flex-col gap-1 sm:gap-3">
                       {column.map((item) => (
                         <Link
                           key={item.label}
                           href={item.href}
                           onClick={onClose}
-                          className="focus-ring w-fit text-[15px] tracking-[-0.01em] text-white/60 transition-colors duration-300 hover:text-white"
+                          /* `py-1.5 -my-1.5` on touch widths grows the tap
+                             target without moving the text — a 15px link is
+                             otherwise an 18px-tall thing to hit with a thumb. */
+                          className="focus-ring -my-1.5 w-fit py-1.5 text-[15px] tracking-[-0.01em] text-white/60 transition-colors duration-300 hover:text-white sm:my-0 sm:py-0"
                         >
                           {item.label}
                         </Link>
@@ -145,13 +149,13 @@ export default function MenuOverlay({
                 >
                   <a
                     href={BRAND.phoneHref}
-                    className="focus-ring w-fit rounded transition-colors duration-300 hover:text-white"
+                    className="focus-ring -my-1 w-fit rounded py-1 transition-colors duration-300 hover:text-white sm:my-0 sm:py-0"
                   >
                     {BRAND.phone}
                   </a>
                   <a
                     href={`mailto:${BRAND.email}`}
-                    className="focus-ring w-fit rounded transition-colors duration-300 hover:text-white"
+                    className="focus-ring -my-1 w-fit rounded py-1 break-all transition-colors duration-300 hover:text-white sm:my-0 sm:py-0"
                   >
                     {BRAND.email}
                   </a>

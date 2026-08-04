@@ -47,6 +47,18 @@
 
   --font-display: "Gustavo", var(--font-archivo), "Helvetica Neue", Arial,
     sans-serif;
+
+  /* Height of the fixed header. Every consumer — the main padding that clears
+     it, the hero's viewport maths, and the matching bar inside each takeover —
+     reads this instead of repeating a magic number, so the bar can change
+     height per breakpoint in one place. */
+  --nav-h: 60px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --nav-h: 72px;
+  }
 }
 
 @theme inline {
@@ -61,6 +73,10 @@
   --color-stone: var(--stone);
   --font-sans: var(--font-display);
   --font-display: var(--font-display);
+
+  /* Exposes the header height as a spacing token, so `h-nav` / `pt-nav` /
+     `top-nav` all track the same variable. */
+  --spacing-nav: var(--nav-h);
 }
 
 body {
@@ -78,6 +94,42 @@ html {
   -ms-overflow-style: none;
 }
 
+/* Nothing on this site is meant to scroll sideways. Several frames are placed
+   with negative offsets (the listing's small image hangs below and outside its
+   parent) and any one of them going a few pixels wide would hand the whole
+   document a horizontal scrollbar on a phone.
+   `clip` rather than `hidden` on purpose: `overflow: hidden` makes the element
+   a scroll container, which silently kills `position: sticky` in descendants
+   and gives Lenis a second scrollable axis to fight over. `clip` just clips. */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+
+  /* iOS Safari inflates text in landscape unless this is pinned, which would
+     break every `clamp()` in the type scale. `100%` keeps the author size. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* The grey flash Chrome/Safari paint over a tapped control. The site's own
+   press states are the design; this is not. */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Scroll containers that keep their own track hidden — the overlays and the
+   hero strip all want to scroll without painting chrome over the artwork. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 html::-webkit-scrollbar {
   display: none;
 }
@@ -87,16 +139,45 @@ html::-webkit-scrollbar {
   color: var(--background);
 }
 
-/* The single horizontal gutter every full-width section aligns to. */
+/* The single horizontal gutter every full-width section aligns to.
+   `.shell-gutter` is the gutter on its own, for elements that need to line up
+   with the shell while their sibling stays full-bleed (the hero wordmark over
+   the edge-to-edge property strip). `.section-shell` adds the width cap. */
+.shell-gutter,
 .section-shell {
-  width: 100%;
   padding-inline: 1.25rem;
 }
 
 @media (min-width: 640px) {
+  .shell-gutter,
   .section-shell {
     padding-inline: 2rem;
   }
+}
+
+@media (min-width: 1280px) {
+  .shell-gutter,
+  .section-shell {
+    padding-inline: 3rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .shell-gutter,
+  .section-shell {
+    padding-inline: 4rem;
+  }
+}
+
+/* Past `--shell-max` the content stops growing and centres instead. The layout
+   is full-bleed editorial by design, so the cap is deliberately generous and
+   only engages on very wide monitors — where otherwise a line of body copy
+   would run the entire 2560px and become unreadable. */
+.section-shell {
+  --shell-max: 120rem;
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
 }
 
 .focus-ring:focus-visible {
@@ -106,29 +187,46 @@ html::-webkit-scrollbar {
 
 /* --------------------------------------------------------------------------
    Menu toggle — two rules, spreading apart on hover rather than morphing.
+
+   Every :hover rule below is behind `@media (hover: hover)`. Tailwind already
+   wraps its own `hover:` variants that way, but these are hand-written, and on
+   a touchscreen an unguarded :hover latches after a tap and stays applied
+   until you tap elsewhere — the menu list would stay dimmed around whichever
+   link you last touched.
    -------------------------------------------------------------------------- */
 .menu-line {
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.menu-toggle:hover .menu-line-top,
 .menu-toggle:focus-visible .menu-line-top {
   transform: translateY(-0.2rem);
 }
 
-.menu-toggle:hover .menu-line-bottom,
 .menu-toggle:focus-visible .menu-line-bottom {
   transform: translateY(0.2rem);
 }
 
-/* Hovering one destination recedes the rest of the list. */
-.menu-list:hover .menu-link {
-  opacity: 0.3;
-}
-
-.menu-list .menu-link:hover,
 .menu-list .menu-link:focus-visible {
   opacity: 1;
+}
+
+@media (hover: hover) {
+  .menu-toggle:hover .menu-line-top {
+    transform: translateY(-0.2rem);
+  }
+
+  .menu-toggle:hover .menu-line-bottom {
+    transform: translateY(0.2rem);
+  }
+
+  /* Hovering one destination recedes the rest of the list. */
+  .menu-list:hover .menu-link {
+    opacity: 0.3;
+  }
+
+  .menu-list .menu-link:hover {
+    opacity: 1;
+  }
 }
 
 .menu-link {
@@ -152,9 +250,71 @@ html::-webkit-scrollbar {
     border-color 0.4s ease;
 }
 
-.liquid-glass:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.28);
+@media (hover: hover) {
+  .liquid-glass:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.28);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Hero property strip — a continuous right-to-left marquee, phones only.
+
+   Six frames cannot share a phone's width and stay legible. The previous
+   treatment was a manual swipe scroller, but nothing on screen advertised that
+   it scrolled, so in practice the last four properties were never seen. Moving
+   it under its own power shows the whole portfolio without asking for a
+   gesture, and running it off both edges reads as one continuous strip rather
+   than a row that happens to be cut off.
+
+   The seam: the track holds two identical sets, and each set carries its own
+   trailing gap (`pr-1.5`, matching the gap between frames). That makes the
+   track exactly twice one set's *advance*, so translating by -50% lands frame
+   one of set B precisely where frame one of set A began — the wrap is
+   invisible. Without the trailing gap the track would be `2S + gap` wide and
+   -50% would land half a gap out, nudging the strip sideways every cycle.
+   -------------------------------------------------------------------------- */
+@keyframes hero-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* `width < 48rem` and not `max-width: 767px`: the duplicate set is dropped by
+   Tailwind's `md:hidden` at `min-width: 48rem`, and these two queries have to be
+   exact complements. A `767px` ceiling is not — viewport widths are fractional
+   at non-integer device pixel ratios, so a 767.2px window satisfied neither
+   query and landed in a dead zone: no animation, but the duplicate set still
+   rendered, leaving a static strip with six unreachable copies past its end. */
+@media (width < 48rem) {
+  .hero-marquee-track {
+    /* translate3d + will-change keeps this on the compositor, so it never
+       competes with Lenis for main-thread time while the page is scrolling. */
+    animation: hero-marquee var(--hero-marquee-duration, 34s) linear infinite;
+    will-change: transform;
+  }
+}
+
+/* Indefinite motion is exactly what this preference is asking us not to do, so
+   the strip becomes a strip the reader moves themselves. The duplicate set is
+   dropped at the same time — with the animation off it would just be six
+   unreachable copies sitting past the end of the scroll range. */
+@media (width < 48rem) and (prefers-reduced-motion: reduce) {
+  .hero-marquee {
+    overflow-x: auto;
+  }
+
+  .hero-marquee-track {
+    animation: none;
+    will-change: auto;
+  }
+
+  .hero-marquee-dupe {
+    display: none;
+  }
 }
 
 /* Entrance choreography for the hero. */

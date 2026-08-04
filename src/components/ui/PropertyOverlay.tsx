@@ -41,8 +41,8 @@ export default function PropertyOverlay({
           aria-label={`${property.name} details`}
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 z-30">
-            <div className="section-shell flex h-[72px] items-center justify-end">
-              <div className="pointer-events-auto -mr-4">
+            <div className="section-shell flex h-nav items-center justify-end">
+              <div className="pointer-events-auto -mr-3 sm:-mr-4">
                 <CloseButton
                   onClick={onClose}
                   label={`Close ${property.name}`}
@@ -51,9 +51,12 @@ export default function PropertyOverlay({
             </div>
           </div>
 
-          <div data-lenis-prevent className="h-full overflow-y-auto overscroll-contain bg-background [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            data-lenis-prevent
+            className="no-scrollbar h-full overflow-y-auto overscroll-contain bg-background"
+          >
             {/* Hero — the close button sits over this, so it stays white. */}
-            <div className="relative h-[62vh] min-h-[380px] w-full overflow-hidden bg-line">
+            <div className="relative h-[62svh] min-h-[20rem] w-full overflow-hidden bg-line">
               <motion.div
                 initial={{ scale: 1.12 }}
                 animate={{ scale: 1 }}
@@ -75,30 +78,30 @@ export default function PropertyOverlay({
                 initial={{ opacity: 0, y: 26 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}
-                className="section-shell absolute inset-x-0 bottom-0 pb-10 sm:pb-14"
+                className="section-shell absolute inset-x-0 bottom-0 pb-8 sm:pb-14"
               >
-                <p className="text-[11px] font-medium tracking-[0.28em] text-white/60 uppercase">
+                <p className="text-[10px] font-medium tracking-[0.28em] text-white/60 uppercase sm:text-[11px]">
                   {property.location} — {property.kind}
                 </p>
-                <h2 className="mt-3 text-[clamp(2.25rem,6.5vw,5rem)] leading-[0.95] font-medium tracking-[-0.04em] text-white">
+                <h2 className="mt-3 text-[clamp(1.9rem,6.5vw,5rem)] leading-[0.95] font-medium tracking-[-0.04em] text-white text-pretty">
                   {property.name}
                 </h2>
               </motion.div>
             </div>
 
-            <div className="section-shell pt-[9vh] pb-[12vh]">
+            <div className="section-shell pt-[max(3rem,9svh)] pb-[max(4rem,12svh)]">
               {/* Statement + the numbers, side by side. */}
-              <div className="grid gap-y-14 md:grid-cols-12 md:gap-x-10">
+              <div className="grid gap-y-12 sm:gap-y-14 md:grid-cols-12 md:gap-x-10">
                 <motion.div
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, ease: EASE, delay: 0.45 }}
                   className="md:col-span-7"
                 >
-                  <p className="text-[clamp(1.35rem,2.4vw,2.1rem)] leading-[1.25] font-medium tracking-[-0.03em] text-balance">
+                  <p className="text-[clamp(1.2rem,2.4vw,2.1rem)] leading-[1.3] font-medium tracking-[-0.03em] text-pretty sm:leading-[1.25]">
                     {property.tagline}
                   </p>
-                  <p className="mt-8 max-w-[52ch] text-[clamp(0.95rem,1.15vw,1.1rem)] leading-[1.65] tracking-[-0.01em] text-foreground/70">
+                  <p className="mt-6 max-w-[52ch] text-[clamp(0.95rem,1.15vw,1.1rem)] leading-[1.65] tracking-[-0.01em] text-foreground/70 sm:mt-8">
                     {property.description}
                   </p>
                 </motion.div>
@@ -107,7 +110,7 @@ export default function PropertyOverlay({
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, ease: EASE, delay: 0.55 }}
-                  className="grid grid-cols-2 gap-x-8 gap-y-8 self-start md:col-span-4 md:col-start-9"
+                  className="grid grid-cols-2 gap-x-6 gap-y-7 self-start sm:gap-x-8 sm:gap-y-8 md:col-span-4 md:col-start-9"
                 >
                   {property.stats.map((stat) => (
                     <div key={stat.label} className="border-t border-line pt-4">
@@ -127,12 +130,12 @@ export default function PropertyOverlay({
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.65 }}
-                className="mt-[11vh] grid gap-y-8 md:grid-cols-12 md:gap-x-10"
+                className="mt-[max(3.5rem,11svh)] grid gap-y-7 md:grid-cols-12 md:gap-x-10"
               >
                 <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase md:col-span-3">
                   {"What's included"}
                 </p>
-                <ul className="grid grid-cols-2 gap-x-8 gap-y-4 md:col-span-8 md:col-start-5 lg:grid-cols-3">
+                <ul className="grid grid-cols-2 gap-x-6 gap-y-4 sm:gap-x-8 md:col-span-8 md:col-start-5 lg:grid-cols-3">
                   {property.amenities.map((item) => (
                     <li
                       key={item}
@@ -149,7 +152,7 @@ export default function PropertyOverlay({
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.75 }}
-                className="mt-[11vh] grid gap-5 sm:grid-cols-2"
+                className="mt-[max(3.5rem,11svh)] grid gap-4 sm:grid-cols-2 sm:gap-5"
               >
                 {property.gallery.slice(1).map((src, i) => (
                   <figure
@@ -174,21 +177,21 @@ export default function PropertyOverlay({
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.85 }}
-                className="mt-[11vh] border-t border-line pt-10"
+                className="mt-[max(3.5rem,11svh)] border-t border-line pt-8 sm:pt-10"
               >
-                <p className="text-[clamp(1.15rem,2vw,1.75rem)] leading-[1.25] font-medium tracking-[-0.03em]">
+                <p className="text-[clamp(1.15rem,2vw,1.75rem)] leading-[1.25] font-medium tracking-[-0.03em] text-pretty">
                   Enquire about {property.name}
                 </p>
-                <div className="mt-5 flex flex-wrap gap-x-8 gap-y-2 text-[14px] text-foreground/60">
+                <div className="mt-5 flex flex-wrap gap-x-8 gap-y-1 text-[14px] text-foreground/60">
                   <a
                     href={BRAND.phoneHref}
-                    className="focus-ring rounded transition-colors duration-300 hover:text-foreground"
+                    className="focus-ring -my-1.5 rounded py-1.5 transition-colors duration-300 hover:text-foreground sm:my-0 sm:py-0"
                   >
                     {BRAND.phone}
                   </a>
                   <a
                     href={`mailto:${BRAND.email}`}
-                    className="focus-ring rounded transition-colors duration-300 hover:text-foreground"
+                    className="focus-ring -my-1.5 rounded py-1.5 break-all transition-colors duration-300 hover:text-foreground sm:my-0 sm:py-0"
                   >
                     {BRAND.email}
                   </a>

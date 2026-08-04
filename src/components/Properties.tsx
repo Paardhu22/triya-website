@@ -49,7 +49,11 @@ function CategoryBand({
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.9, ease: EASE, delay: index * 0.08 }}
       aria-label={`Browse ${category.label}`}
-      className="group focus-ring relative block h-[62vh] w-full overflow-hidden rounded-2xl text-left md:h-[100dvh]"
+      /* `min-h` rather than a fixed height: the band is `overflow-hidden` for
+         the image's hover scale, so on a narrow screen — where the blurb wraps
+         to four lines — a fixed height would crop the CTA off the bottom
+         instead of letting the band grow. */
+      className="group focus-ring relative block min-h-[62svh] w-full overflow-hidden rounded-2xl text-left md:min-h-[100svh]"
     >
       <Image
         src={category.image}
@@ -61,7 +65,7 @@ function CategoryBand({
       {/* Dark enough that the type holds on any placeholder photograph. */}
       <div className="absolute inset-0 bg-ink/60 transition-colors duration-700 group-hover:bg-ink/50" />
 
-      <div className="relative flex h-full flex-col justify-between px-5 py-10 sm:px-8 sm:py-12">
+      <div className="relative flex min-h-[inherit] flex-col justify-between gap-12 px-5 py-8 sm:px-8 sm:py-12">
         <p className="text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase">
           {String(index + 1).padStart(2, "0")} —{" "}
           {String(count).padStart(2, "0")} properties
@@ -78,14 +82,14 @@ function CategoryBand({
             className="text-[clamp(2.25rem,5.2vw,5rem)] leading-[0.9] font-bold tracking-[-0.045em] text-white uppercase"
           />
 
-          <p className="mt-6 max-w-[42ch] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-[1.6] tracking-[-0.01em] text-white/65 text-balance">
+          <p className="mt-5 max-w-[42ch] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-[1.6] tracking-[-0.01em] text-white/65 text-pretty sm:mt-6">
             {category.blurb}
           </p>
 
           {/* Decorative — the whole half is the control. */}
           <span
             aria-hidden="true"
-            className="mt-9 inline-flex items-center gap-3 text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase transition-colors duration-300 group-hover:text-white"
+            className="mt-7 inline-flex items-center gap-3 text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase transition-colors duration-300 group-hover:text-white sm:mt-9"
           >
             <Shuffle
               {...SHUFFLE_HOVER_PRESET}
@@ -143,12 +147,15 @@ export default function Properties() {
   }, [openKind, openProperty]);
 
   return (
-    <section id="properties" className="bg-background pt-[14vh] pb-[14vh]">
+    <section
+      id="properties"
+      className="bg-background py-[max(4rem,14svh)]"
+    >
       <div className="section-shell">
         <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase">
           Portfolio
         </p>
-        <p className="mt-8 max-w-[34ch] text-[clamp(1rem,1.35vw,1.35rem)] leading-[1.5] tracking-[-0.015em] text-balance">
+        <p className="mt-6 max-w-[34ch] text-[clamp(1rem,1.35vw,1.35rem)] leading-[1.5] tracking-[-0.015em] text-pretty sm:mt-8">
           Two divisions, one operating standard. Choose the one you are looking
           for and the whole list opens.
         </p>
@@ -158,7 +165,7 @@ export default function Properties() {
           a full screen. Inset from the page edge with a wider gap between
           the two so the images read as separate cards. They stack on narrow
           windows. */}
-      <div className="section-shell mt-[8vh] grid gap-4 sm:gap-6 md:grid-cols-2">
+      <div className="section-shell mt-[max(2.5rem,8svh)] grid gap-4 sm:gap-6 md:grid-cols-2">
         {categories.map((category, i) => (
           <CategoryBand
             key={category.kind}

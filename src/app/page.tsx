@@ -9,7 +9,7 @@ export default function Home() {
     <>
       <Nav />
       {/* Clears the fixed bar, which sits outside the flow. */}
-      <main className="flex flex-1 flex-col pt-[72px]">
+      <main className="flex flex-1 flex-col pt-nav">
         <Hero />
         <HeroStatement />
         <Philosophy />

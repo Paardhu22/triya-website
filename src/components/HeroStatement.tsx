@@ -66,16 +66,20 @@ export default function HeroStatement() {
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 sm:px-8"
+      className="shell-gutter relative flex min-h-[100svh] items-center justify-center overflow-hidden py-16 sm:py-24"
     >
-      <span className="absolute top-8 left-5 text-[11px] tracking-[-0.01em] text-muted sm:left-8">
-        2016
-      </span>
-      <span className="absolute top-8 right-5 text-[11px] tracking-[-0.01em] text-muted sm:right-8">
-        2025
+      {/* The date markers bracket the statement. They are pinned to the gutter
+          rather than the raw viewport edge so they stay in the same column as
+          every other section, and `pt`/`pb` on the parent keeps the centred
+          paragraph from ever reaching them on a short window. */}
+      <span className="shell-gutter absolute inset-x-0 top-8 flex justify-between text-[11px] tracking-[-0.01em] text-muted">
+        <span>2016</span>
+        <span>2025</span>
       </span>
 
-      <p className="relative z-20 mx-auto max-w-[64rem] text-center text-[clamp(2.6rem,4.8vw,5.2rem)] leading-[1.15] font-bold tracking-[-0.035em]">
+      {/* The floor drops to 1.75rem below `sm`: at 2.6rem this 97-character
+          sentence took seven lines on a 320px screen and ran past the fold. */}
+      <p className="relative z-20 mx-auto max-w-[64rem] text-center text-[clamp(1.75rem,7.5vw,5.2rem)] leading-[1.2] font-bold tracking-[-0.035em] sm:text-[clamp(2.25rem,4.8vw,5.2rem)] sm:leading-[1.15]">
         {TEXT_WORDS.map((word, i) => (
           <ScrollWord
             key={i}
