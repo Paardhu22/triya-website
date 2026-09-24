@@ -1,13 +1,26 @@
 import { placeholder } from "@/lib/placeholder";
+import type { AmenityGroup } from "./amenities";
 
 export type PropertyKind = "Hotel" | "Residence";
+
+export type Photo = {
+  src: string;
+  /** Printed under the frame on the detail page; doubles as its alt text. */
+  caption: string;
+};
+
+/** Photographs keep their own proportions — every frame crops with `object-cover`. */
+const photo = (id: string, caption: string): Photo => ({
+  src: placeholder(id, 1800),
+  caption,
+});
 
 export type Property = {
   slug: string;
   name: string;
   location: string;
   kind: PropertyKind;
-  /** Placeholder source. Swap for a local /properties/*.jpg once shoots are delivered. */
+  /** Cover shot for the hero strip. Placeholder — swap for a local /properties/*.jpg once shoots are delivered. */
   image: string;
   /** Intrinsic ratio the hero strip lays the frame out with. */
   ratio: string;
@@ -17,9 +30,13 @@ export type Property = {
   /** The long version, for the detail takeover. */
   description: string;
   stats: { label: string; value: string }[];
-  amenities: string[];
-  /** [0] is the detail hero; [0] and [1] are the pair the listing band clusters. */
-  gallery: string[];
+  /** Grouped the way a guest scans them: the room, food, services, safety. */
+  amenities: AmenityGroup[];
+  /**
+   * [0] is the detail hero; [1] and [2] are the pair the listing band
+   * clusters; everything after [0] is the detail page's captioned gallery.
+   */
+  gallery: Photo[];
 };
 
 /**
@@ -32,7 +49,7 @@ export const properties: Property[] = [
     name: "Triya House",
     location: "Banjara Hills",
     kind: "Residence",
-    image: placeholder("triya-house", 900, 700),
+    image: placeholder("1788145749384-f91374d3bb99", 1000),
     ratio: "5 / 4",
     tagline: "Managed living, five minutes from Road No. 12",
     summary:
@@ -46,18 +63,26 @@ export const properties: Property[] = [
       { label: "From", value: "₹18,000 / mo" },
     ],
     amenities: [
-      "All meals included",
-      "Daily housekeeping",
-      "High-speed Wi-Fi",
-      "Laundry",
-      "24/7 security",
-      "Common lounge",
+      {
+        title: "Your room",
+        items: ["furnished", "attachedBath", "ac", "studyDesk", "hotWater"],
+      },
+      { title: "Meals", items: ["allMeals", "vegNonVeg", "drinkingWater"] },
+      {
+        title: "Services",
+        items: ["wifi", "housekeepingDaily", "laundry", "powerBackup"],
+      },
+      { title: "Safety", items: ["security", "cctv", "biometric", "manager"] },
+      { title: "Shared spaces", items: ["lounge", "courtyard"] },
     ],
     gallery: [
-      placeholder("triya-house-a", 1600, 900),
-      placeholder("triya-house-b", 900, 1125),
-      placeholder("triya-house-c", 900, 700),
-      placeholder("triya-house-d", 900, 700),
+      photo("1788145749384-f91374d3bb99", "The bungalow, from the garden"),
+      photo("1765464184843-105e144bd54b", "Private room"),
+      photo("1715523609055-fad02a8651da", "The courtyard"),
+      photo("1589778655375-3e622a9fc91c", "Lunch in the dining room"),
+      photo("1680965075873-64356db057fb", "Common floor"),
+      photo("1674162406360-df5ec5eb97e4", "A study desk in every room"),
+      photo("1626806819282-2c1dc01a5e0c", "Laundry room"),
     ],
   },
   {
@@ -65,7 +90,7 @@ export const properties: Property[] = [
     name: "The Terrace",
     location: "Gachibowli",
     kind: "Hotel",
-    image: placeholder("triya-terrace", 1000, 640),
+    image: placeholder("1645497781181-d6684ebd1863", 1000),
     ratio: "16 / 10",
     tagline: "A business hotel built for the financial district",
     summary:
@@ -79,18 +104,28 @@ export const properties: Property[] = [
       { label: "From", value: "₹6,400 / night" },
     ],
     amenities: [
-      "Rooftop restaurant",
-      "Airport transfer",
-      "Business lounge",
-      "Gym",
-      "Valet parking",
-      "Room service",
+      {
+        title: "In the room",
+        items: ["ac", "tv", "workDesk", "rainShower", "minibar"],
+      },
+      {
+        title: "Dining",
+        items: ["roofRestaurant", "lateKitchen", "roomService"],
+      },
+      { title: "Facilities", items: ["businessLounge", "gym", "wifi"] },
+      {
+        title: "Services",
+        items: ["checkIn24", "airport", "valet", "laundry"],
+      },
     ],
     gallery: [
-      placeholder("triya-terrace-a", 1600, 900),
-      placeholder("triya-terrace-b", 900, 1125),
-      placeholder("triya-terrace-c", 900, 700),
-      placeholder("triya-terrace-d", 900, 700),
+      photo("1621275471769-e6aa344546d5", "Rooftop restaurant"),
+      photo("1631049307264-da0ec9d70304", "Deluxe king room"),
+      photo("1758448500688-3ababa93fd67", "Lobby and 24-hour front desk"),
+      photo("1648383228240-6ed939727ad6", "Twin room"),
+      photo("1718894070114-6de0e98449a2", "Rain-shower bathroom"),
+      photo("1604328727766-a151d1045ab4", "Business lounge"),
+      photo("1740895307943-7878df384db1", "Gym"),
     ],
   },
   {
@@ -98,7 +133,7 @@ export const properties: Property[] = [
     name: "Kondapur Collective",
     location: "Kondapur",
     kind: "Residence",
-    image: placeholder("triya-collective", 720, 960),
+    image: placeholder("1642426020136-8a90aa58d31e", 1000),
     ratio: "3 / 4",
     tagline: "Shared residences for people building a career here",
     summary:
@@ -112,18 +147,26 @@ export const properties: Property[] = [
       { label: "From", value: "₹11,500 / mo" },
     ],
     amenities: [
-      "All meals included",
-      "Daily housekeeping",
-      "Rooftop deck",
-      "High-speed Wi-Fi",
-      "Laundry",
-      "24/7 security",
+      {
+        title: "Your room",
+        items: ["furnished", "attachedBath", "studyDesk", "hotWater"],
+      },
+      { title: "Meals", items: ["allMeals", "vegNonVeg", "drinkingWater"] },
+      {
+        title: "Services",
+        items: ["wifi", "housekeepingDaily", "laundry", "powerBackup"],
+      },
+      { title: "Safety", items: ["security", "cctv", "biometric", "manager"] },
+      { title: "Shared spaces", items: ["rooftop", "workLounge"] },
     ],
     gallery: [
-      placeholder("triya-collective-a", 1600, 900),
-      placeholder("triya-collective-b", 900, 1125),
-      placeholder("triya-collective-c", 900, 700),
-      placeholder("triya-collective-d", 900, 700),
+      photo("1719569332255-030dd517952f", "Twin-sharing room"),
+      photo("1635108196981-f21e87e4cc1f", "Single room"),
+      photo("1546833999-b9f581a1996d", "Lunch from the mess kitchen"),
+      photo("1762195804066-2fece9b24496", "The rooftop"),
+      photo("1667388968964-4aa652df0a9b", "Dining hall"),
+      photo("1604328698692-f76ea9498e76", "Work-from-home lounge"),
+      photo("1646592474094-342fbc28736c", "Laundry room"),
     ],
   },
   {
@@ -131,7 +174,7 @@ export const properties: Property[] = [
     name: "Triya Court",
     location: "Madhapur",
     kind: "Hotel",
-    image: placeholder("triya-court", 880, 660),
+    image: placeholder("1772028284145-d66956bf2b91", 1000),
     ratio: "4 / 3",
     tagline: "A quieter address inside HITEC City",
     summary:
@@ -145,18 +188,25 @@ export const properties: Property[] = [
       { label: "From", value: "₹5,800 / night" },
     ],
     amenities: [
-      "Garden courtyard",
-      "Breakfast included",
-      "Gym",
-      "Meeting room",
-      "Valet parking",
-      "Room service",
+      {
+        title: "In the room",
+        items: ["ac", "tv", "workDesk", "rainShower", "safe"],
+      },
+      { title: "Dining", items: ["breakfast", "roomService"] },
+      {
+        title: "Facilities",
+        items: ["gardenCourtyard", "gym", "meetingRoom", "wifi"],
+      },
+      { title: "Services", items: ["housekeepingDaily", "laundry", "valet"] },
     ],
     gallery: [
-      placeholder("triya-court-a", 1600, 900),
-      placeholder("triya-court-b", 900, 1125),
-      placeholder("triya-court-c", 900, 700),
-      placeholder("triya-court-d", 900, 700),
+      photo("1772028284145-d66956bf2b91", "The garden courtyard"),
+      photo("1776500587913-6e55907a738e", "Garden-view twin room"),
+      photo("1759038085950-1234ca8f5fed", "Reception"),
+      photo("1578704311587-4fbd590630d5", "Breakfast, included in every stay"),
+      photo("1662385930165-49ebaa03b152", "Superior king room"),
+      photo("1431540015161-0bf868a2d407", "Meeting room"),
+      photo("1740895307920-0ba63bffc1c9", "Gym"),
     ],
   },
   {
@@ -164,7 +214,7 @@ export const properties: Property[] = [
     name: "The Annexe",
     location: "Jubilee Hills",
     kind: "Residence",
-    image: placeholder("triya-annexe", 1000, 620),
+    image: placeholder("1642667670006-6b3059ccf96d", 1000),
     ratio: "16 / 10",
     tagline: "Private studios on one of the city's quietest streets",
     summary:
@@ -178,18 +228,25 @@ export const properties: Property[] = [
       { label: "From", value: "₹32,000 / mo" },
     ],
     amenities: [
-      "Private kitchenette",
-      "Weekly housekeeping",
-      "High-speed Wi-Fi",
-      "Laundry",
-      "24/7 security",
-      "Covered parking",
+      {
+        title: "Your studio",
+        items: ["kitchenette", "fridge", "attachedBath", "ac", "workDesk", "balcony"],
+      },
+      {
+        title: "Services",
+        items: ["wifi", "housekeepingWeekly", "laundry", "powerBackup", "maintenance"],
+      },
+      { title: "Safety", items: ["security", "cctv", "keycard"] },
+      { title: "Shared spaces", items: ["residentsLounge", "coveredParking"] },
     ],
     gallery: [
-      placeholder("triya-annexe-a", 1600, 900),
-      placeholder("triya-annexe-b", 900, 1125),
-      placeholder("triya-annexe-c", 900, 700),
-      placeholder("triya-annexe-d", 900, 700),
+      photo("1642667670006-6b3059ccf96d", "The house, from the street"),
+      photo("1787507470186-deb4523d46cb", "Studio with kitchenette"),
+      photo("1584132905271-512c958d674a", "Studio bedroom"),
+      photo("1770757587087-766db2874c21", "Kitchenette"),
+      photo("1769184618473-58c1f0e294f4", "Residents' lounge"),
+      photo("1763741208003-cb6968d343fa", "Balcony"),
+      photo("1630835016331-1a9b60581820", "Bedside"),
     ],
   },
   {
@@ -197,7 +254,7 @@ export const properties: Property[] = [
     name: "Triya Pavilion",
     location: "Financial District",
     kind: "Hotel",
-    image: placeholder("triya-pavilion", 1120, 630),
+    image: placeholder("1601785491008-d1153dfadd57", 1000),
     ratio: "16 / 9",
     tagline: "The flagship, built for stays that run long",
     summary:
@@ -211,18 +268,31 @@ export const properties: Property[] = [
       { label: "From", value: "₹8,900 / night" },
     ],
     amenities: [
-      "Restaurant & bar",
-      "Two event floors",
-      "Gym & pool",
-      "Airport transfer",
-      "Business lounge",
-      "Room service",
+      {
+        title: "In the room",
+        items: ["ac", "tv", "rainShower", "minibar", "safe"],
+      },
+      {
+        title: "Dining",
+        items: ["restaurant", "bar", "breakfast", "roomService"],
+      },
+      {
+        title: "Facilities",
+        items: ["pool", "gym", "eventFloors", "businessLounge"],
+      },
+      {
+        title: "Services",
+        items: ["checkIn24", "airport", "valet", "laundry"],
+      },
     ],
     gallery: [
-      placeholder("triya-pavilion-a", 1600, 900),
-      placeholder("triya-pavilion-b", 900, 1125),
-      placeholder("triya-pavilion-c", 900, 700),
-      placeholder("triya-pavilion-d", 900, 700),
+      photo("1772127822607-2343696cf82e", "Pool deck"),
+      photo("1731336478850-6bce7235e320", "Premier king room"),
+      photo("1729394405518-eaf2a0203aa7", "All-day restaurant"),
+      photo("1531973968078-9bb02785f13d", "The bar"),
+      photo("1646991761123-d83ce47c30c9", "Lobby lounge"),
+      photo("1744095407215-66e40734e23a", "Boardroom on the event floors"),
+      photo("1722477936580-84aa10762b0b", "Breakfast buffet"),
     ],
   },
   {
@@ -230,7 +300,7 @@ export const properties: Property[] = [
     name: "The Grove",
     location: "Kokapet",
     kind: "Residence",
-    image: placeholder("triya-grove", 900, 700),
+    image: placeholder("1782846027810-9129a9894463", 1000),
     ratio: "5 / 4",
     tagline: "The newest residence, and the greenest",
     summary:
@@ -244,18 +314,26 @@ export const properties: Property[] = [
       { label: "From", value: "₹21,000 / mo" },
     ],
     amenities: [
-      "All meals included",
-      "Daily housekeeping",
-      "Planted deck",
-      "High-speed Wi-Fi",
-      "Laundry",
-      "24/7 security",
+      {
+        title: "Your room",
+        items: ["furnished", "attachedBath", "crossVent", "balcony", "studyDesk"],
+      },
+      { title: "Meals", items: ["allMeals", "vegNonVeg", "drinkingWater"] },
+      {
+        title: "Services",
+        items: ["wifi", "housekeepingDaily", "laundry", "powerBackup"],
+      },
+      { title: "Safety", items: ["security", "cctv", "biometric", "manager"] },
+      { title: "Shared spaces", items: ["plantedDeck", "courtyard"] },
     ],
     gallery: [
-      placeholder("triya-grove-a", 1600, 900),
-      placeholder("triya-grove-b", 900, 1125),
-      placeholder("triya-grove-c", 900, 700),
-      placeholder("triya-grove-d", 900, 700),
+      photo("1781910472670-0c79a533e654", "The planted deck"),
+      photo("1759139445627-5ce9d5fac8f9", "Twin-sharing room"),
+      photo("1783835541306-e23689140c12", "Deep balconies on every floor"),
+      photo("1773847469674-189153e5e32d", "Dining room"),
+      photo("1742281257687-092746ad6021", "Dinner thali"),
+      photo("1749703810919-1f979a9a3982", "Reading corner"),
+      photo("1767034243123-5a5c45269597", "The courtyard, shaded through May"),
     ],
   },
   {
@@ -263,7 +341,7 @@ export const properties: Property[] = [
     name: "Triya Reserve",
     location: "Begumpet",
     kind: "Hotel",
-    image: placeholder("triya-reserve", 1000, 640),
+    image: placeholder("1775811091644-69162fa36ea1", 1000),
     ratio: "16 / 10",
     tagline: "A small hotel in the oldest part of the portfolio's map",
     summary:
@@ -277,18 +355,19 @@ export const properties: Property[] = [
       { label: "From", value: "₹5,200 / night" },
     ],
     amenities: [
-      "All-day café",
-      "Breakfast included",
-      "Reading room",
-      "Airport transfer",
-      "Parking",
-      "Room service",
+      { title: "In the room", items: ["ac", "tv", "workDesk", "rainShower"] },
+      { title: "Dining", items: ["cafe", "breakfast", "roomService"] },
+      { title: "Facilities", items: ["readingRoom", "wifi", "parking"] },
+      { title: "Services", items: ["airport", "housekeepingDaily", "laundry"] },
     ],
     gallery: [
-      placeholder("triya-reserve-a", 1600, 900),
-      placeholder("triya-reserve-b", 900, 1125),
-      placeholder("triya-reserve-c", 900, 700),
-      placeholder("triya-reserve-d", 900, 700),
+      photo("1775811091644-69162fa36ea1", "The courtyard, after dark"),
+      photo("1662411394768-77db7c7b62e8", "Heritage king room"),
+      photo("1697032217861-46327ba5f5d2", "The original staircase"),
+      photo("1544031064-9de80864ade5", "All-day café"),
+      photo("1783663556097-6bc76c5d4c88", "Reading room"),
+      photo("1741506131058-533fcf894483", "Twin room"),
+      photo("1771575521341-415ec739be67", "Original terrazzo"),
     ],
   },
 ];
@@ -315,7 +394,7 @@ export const categories: Category[] = [
     label: "Residences",
     blurb:
       "Long-stay homes with meals, housekeeping and security folded into the rent — for people who moved here to work, not to keep house.",
-    image: placeholder("triya-cat-residences", 1920, 1080),
+    image: placeholder("1787396032419-3f26e9710244", 1400),
   },
   {
     kind: "Hotel",
@@ -323,6 +402,6 @@ export const categories: Category[] = [
     label: "Hotels",
     blurb:
       "Short-stay properties across the western corridor, each one small enough that the front desk still recognises a returning guest.",
-    image: placeholder("triya-cat-hotels", 1920, 1080),
+    image: placeholder("1759038086832-795644825e3a", 1400),
   },
 ];

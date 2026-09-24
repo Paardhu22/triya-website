@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { BRAND } from "@/data/brand";
 import { EASE, EASE_UI } from "@/lib/motion";
 import CloseButton from "./CloseButton";
+import Logo from "./Logo";
 
 /**
  * Full-screen navigation takeover.
@@ -62,12 +63,10 @@ export default function MenuOverlay({
           aria-label="Site menu"
         >
           <div className="section-shell flex min-h-full flex-col">
-            {/* Matches the bar geometry underneath, so the wordmark does not
+            {/* Matches the bar geometry underneath, so the logo does not
                 shift when the panel drops over it. */}
             <div className="flex h-nav shrink-0 items-center justify-between">
-              <span className="text-[19px] leading-none font-bold tracking-[-0.03em] text-white sm:text-[22px]">
-                triya<span className="font-medium text-white/70">group</span>
-              </span>
+              <Logo />
               {/* Pulled out to the gutter edge, the way the reference hangs it. */}
               <div className="-mr-3 sm:-mr-4">
                 <CloseButton onClick={onClose} />

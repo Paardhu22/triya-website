@@ -3,10 +3,26 @@
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { AMENITIES } from "@/data/amenities";
 import { BRAND } from "@/data/brand";
 import type { Property } from "@/data/properties";
+import { cn } from "@/lib/cn";
 import { EASE, EASE_UI } from "@/lib/motion";
 import CloseButton from "./CloseButton";
+
+/**
+ * Below the fold the page is read by scrolling, not arrival, so these rise
+ * when they come into view rather than on the takeover's opening stagger.
+ */
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 18 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.15 },
+  transition: { duration: 0.7, ease: EASE, delay },
+});
+
+const EYEBROW =
+  "text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase";
 
 /**
  * The property detail page — the last layer of the stack, opened from the
@@ -18,6 +34,9 @@ import CloseButton from "./CloseButton";
  *
  * The panel carries the slide; the contents fade up behind it on a short
  * stagger, so the takeover reads as one move rather than two.
+ *
+ * Reading order follows what someone choosing a room checks first: what it
+ * costs, what is included, then what it looks like inside.
  */
 export default function PropertyOverlay({
   property,
@@ -64,7 +83,7 @@ export default function PropertyOverlay({
                 className="absolute inset-0"
               >
                 <Image
-                  src={property.gallery[0] ?? property.image}
+                  src={property.gallery[0]?.src ?? property.image}
                   alt={`${property.name}, ${property.location}`}
                   fill
                   sizes="100vw"
@@ -125,58 +144,109 @@ export default function PropertyOverlay({
                 </motion.dl>
               </div>
 
-              {/* Amenities */}
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: EASE, delay: 0.65 }}
-                className="mt-[max(3.5rem,11svh)] grid gap-y-7 md:grid-cols-12 md:gap-x-10"
+              {/* Amenities — grouped, each item on the same ruled row the
+                  stats use, with an icon so the list can be scanned. */}
+              <section
+                aria-labelledby={`${property.slug}-amenities`}
+                className="mt-[max(3.5rem,11svh)] grid gap-y-7 sm:gap-y-10 md:grid-cols-12 md:gap-x-10"
               >
-                <p className="text-[10px] font-medium tracking-[0.28em] text-foreground/45 uppercase md:col-span-3">
+                <motion.h3
+                  {...reveal()}
+                  id={`${property.slug}-amenities`}
+                  className={cn(EYEBROW, "md:col-span-3")}
+                >
                   {"What's included"}
-                </p>
-                <ul className="grid grid-cols-2 gap-x-6 gap-y-4 sm:gap-x-8 md:col-span-8 md:col-start-5 lg:grid-cols-3">
-                  {property.amenities.map((item) => (
-                    <li
-                      key={item}
-                      className="border-t border-line pt-3 text-[14px] tracking-[-0.01em] text-foreground/75"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
+                </motion.h3>
 
-              {/* Gallery — the tall frame leads, the two wide ones follow. */}
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: EASE, delay: 0.75 }}
-                className="mt-[max(3.5rem,11svh)] grid gap-4 sm:grid-cols-2 sm:gap-5"
+                <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 md:col-span-9 lg:grid-cols-3">
+                  {property.amenities.map((group, i) => (
+                    <motion.div key={group.title} {...reveal(i * 0.06)}>
+                      <p className="text-[11px] font-medium tracking-[0.2em] uppercase">
+                        {group.title}
+                      </p>
+                      <ul className="mt-4">
+                        {group.items.map((key) => {
+                          const { label, icon: Icon } = AMENITIES[key];
+                          return (
+                            <li
+                              key={key}
+                              className="flex items-center gap-3 border-t border-line py-3 text-[14px] tracking-[-0.01em] text-foreground/75"
+                            >
+                              <Icon
+                                aria-hidden="true"
+                                strokeWidth={1.5}
+                                className="h-[18px] w-[18px] shrink-0 text-foreground/50"
+                              />
+                              {label}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Gallery — rows alternate a wide frame and a tall one, and
+                  swap sides each row. Bottoms align, so the tall frame rises
+                  above its neighbour and the captions sit on one line. */}
+              <section
+                aria-labelledby={`${property.slug}-photos`}
+                className="mt-[max(3.5rem,11svh)]"
               >
-                {property.gallery.slice(1).map((src, i) => (
-                  <figure
-                    key={src}
-                    className={`relative w-full overflow-hidden bg-line ${
-                      i === 0 ? "aspect-[4/5] sm:row-span-2" : "aspect-[4/3]"
-                    }`}
-                  >
-                    <Image
-                      src={src}
-                      alt={`${property.name} — view ${i + 1}`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                      className="object-cover"
-                    />
-                  </figure>
-                ))}
-              </motion.div>
+                <motion.h3
+                  {...reveal()}
+                  id={`${property.slug}-photos`}
+                  className={EYEBROW}
+                >
+                  Inside {property.name}
+                </motion.h3>
+
+                <div className="mt-8 grid gap-y-12 md:grid-cols-12 md:items-end md:gap-x-6 md:gap-y-[9svh]">
+                  {property.gallery.slice(1).map((photo, i) => {
+                    const wide = (Math.floor(i / 2) + (i % 2)) % 2 === 0;
+                    return (
+                      <motion.figure
+                        key={photo.src}
+                        {...reveal()}
+                        className={cn(
+                          "group",
+                          wide ? "md:col-span-7" : "md:col-span-5",
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "relative w-full overflow-hidden bg-line",
+                            wide ? "aspect-[4/3]" : "aspect-[4/5]",
+                          )}
+                        >
+                          <Image
+                            src={photo.src}
+                            alt={photo.caption}
+                            fill
+                            sizes={
+                              wide
+                                ? "(max-width: 768px) 100vw, 58vw"
+                                : "(max-width: 768px) 100vw, 42vw"
+                            }
+                            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                          />
+                        </div>
+                        <figcaption className="mt-3 flex items-baseline justify-between gap-6 text-[13px] tracking-[-0.01em] text-foreground/65">
+                          {photo.caption}
+                          <span className="text-[11px] tracking-[0.2em] text-foreground/40 tabular-nums">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                        </figcaption>
+                      </motion.figure>
+                    );
+                  })}
+                </div>
+              </section>
 
               {/* Enquiry */}
               <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: EASE, delay: 0.85 }}
+                {...reveal()}
                 className="mt-[max(3.5rem,11svh)] border-t border-line pt-8 sm:pt-10"
               >
                 <p className="text-[clamp(1.15rem,2vw,1.75rem)] leading-[1.25] font-medium tracking-[-0.03em] text-pretty">

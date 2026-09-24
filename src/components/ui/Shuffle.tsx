@@ -259,15 +259,30 @@ const Shuffle = ({
           // caller's leading is. Rows are given this same explicit height below
           // (via flexbox, not the block-layout line box) so the transform step
           // distance stays in sync with what's actually rendered.
-          const fontSizePx = parseFloat(getComputedStyle(ch).fontSize) || rect.height;
+          const charStyle = getComputedStyle(ch);
+          const fontSizePx = parseFloat(charStyle.fontSize) || rect.height;
           const h = isVertical ? Math.max(rect.height, fontSizePx * 1.2) : rect.height;
+
+          // The same problem sideways. `rect.width` is the char's advance
+          // *after* tracking, so the hero's negative letter-spacing makes the
+          // box narrower than the glyph — the bowl of "p", the arm of "y" and
+          // the right side of "a" and "o" were being cut off at its edge.
+          // Bleed the window out by the tracking plus a tenth of the font size
+          // on each side, then pull it back with equal negative margins: the
+          // window clips nothing, and the letter still lands exactly where
+          // the tracked text put it.
+          const tracking = Math.abs(parseFloat(charStyle.letterSpacing) || 0);
+          const bleed = tracking + fontSizePx * 0.1;
+          const ww = w + bleed * 2;
 
           const wrap = document.createElement("span");
           Object.assign(wrap.style, {
             display: "inline-block",
             overflow: "hidden",
-            width: w + "px",
+            width: ww + "px",
             height: isVertical ? h + "px" : "auto",
+            marginLeft: -bleed + "px",
+            marginRight: -bleed + "px",
             verticalAlign: "bottom",
           });
 
@@ -290,10 +305,10 @@ const Shuffle = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: w + "px",
+                width: ww + "px",
                 height: h + "px",
               }
-            : { display: "inline-block", width: w + "px", textAlign: "center" };
+            : { display: "inline-block", width: ww + "px", textAlign: "center" };
 
           const firstOrig = ch.cloneNode(true) as HTMLElement;
           Object.assign(firstOrig.style, rowStyle);
@@ -325,11 +340,11 @@ const Shuffle = ({
           let finalY = 0;
 
           if (shuffleDirection === "right") {
-            startX = -steps * w;
+            startX = -steps * ww;
             finalX = 0;
           } else if (shuffleDirection === "left") {
             startX = 0;
-            finalX = -steps * w;
+            finalX = -steps * ww;
           } else if (shuffleDirection === "down") {
             startY = -steps * h;
             finalY = 0;

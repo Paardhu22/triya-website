@@ -6,6 +6,7 @@ import { motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion
 
 import { EASE, EASE_UI } from "@/lib/motion";
 import { useLenis } from "./SmoothScrollProvider";
+import { LogoMark, LogoWordmark } from "./ui/Logo";
 import MenuOverlay from "./ui/MenuOverlay";
 import MenuToggle from "./ui/MenuToggle";
 
@@ -85,6 +86,17 @@ export default function Nav() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Shared by the blended header and the mark layer so the two move as one.
+  // `-100%` rather than a pixel offset, so the bar hides itself completely
+  // whatever height the current breakpoint gives it.
+  const barMotion = {
+    initial: { y: "-100%", opacity: 0 },
+    animate: navHidden ? { y: "-100%", opacity: 0 } : { y: 0, opacity: 1 },
+    transition: hasEntered.current
+      ? { duration: 0.38, ease: EASE_UI }
+      : { duration: 0.9, ease: EASE, delay: 0.2 },
+  };
+
   return (
     <>
       {/* Progress bar lives outside the blended header — difference mode
@@ -94,16 +106,8 @@ export default function Nav() {
         style={{ scaleX: progress }}
       />
 
-      {/* `-100%` rather than a pixel offset, so the bar hides itself completely
-          whatever height the current breakpoint gives it. */}
       <motion.header
-        initial={{ y: "-100%", opacity: 0 }}
-        animate={navHidden ? { y: "-100%", opacity: 0 } : { y: 0, opacity: 1 }}
-        transition={
-          hasEntered.current
-            ? { duration: 0.38, ease: EASE_UI }
-            : { duration: 0.9, ease: EASE, delay: 0.2 }
-        }
+        {...barMotion}
         onAnimationComplete={() => {
           hasEntered.current = true;
         }}
@@ -115,15 +119,24 @@ export default function Nav() {
       >
         <div className="section-shell flex h-nav items-center justify-between">
           <Link href="/" className="focus-ring rounded">
-            <span className="text-[19px] leading-none font-bold tracking-[-0.03em] text-white sm:text-[22px]">
-              triya
-              <span className="font-medium text-white/70">group</span>
-            </span>
+            <LogoWordmark />
           </Link>
 
           <MenuToggle onClick={() => setOpen(true)} expanded={open} />
         </div>
       </motion.header>
+
+      {/* The gold mark, unblended over the wordmark (see ui/Logo) —
+          decorative, and click-through to the link beneath. */}
+      <motion.div
+        {...barMotion}
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50"
+      >
+        <div className="section-shell flex h-nav items-center">
+          <LogoMark />
+        </div>
+      </motion.div>
 
       <MenuOverlay open={open} onClose={() => setOpen(false)} />
     </>

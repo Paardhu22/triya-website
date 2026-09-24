@@ -235,7 +235,7 @@ function Band({
           >
             <div className="relative">
               <Frame
-                src={property.gallery[1] ?? property.image}
+                src={property.gallery[1]?.src ?? property.image}
                 alt={`${property.name}, ${property.location}`}
                 sizes="(max-width: 1024px) 70vw, 40vw"
                 priority={index === 0}
@@ -253,7 +253,7 @@ function Band({
                   ~92px or the drift outruns the bleed and pulls a bare edge
                   into view. 24svh alone falls under that on a landscape phone. */}
               <Frame
-                src={property.gallery[2] ?? property.image}
+                src={property.gallery[2]?.src ?? property.image}
                 alt=""
                 sizes="(max-width: 1024px) 42vw, 25vw"
                 delay={0.28}
