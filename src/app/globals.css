@@ -441,6 +441,14 @@ html::-webkit-scrollbar {
   to   { transform: translate3d(-160px, -160px, 0); }
 }
 
+/* Off on touch screens: at 2x the viewport and 3x pixel density it is a ~47 MB
+   layer blended into every frame, which phone GPUs feel and nobody sees at 5%. */
+@media (pointer: coarse) {
+  .site-grain {
+    display: none;
+  }
+}
+
 /* Hidden tab: stop every loop. Not inherited, so it targets every node. */
 body.paused *,
 body.paused *::before,

@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 
 import { properties } from "@/data/properties";
+import { useSmoothProgress } from "@/lib/useSmoothProgress";
 
 /**
  * The cinematic beat between the hero and the statement: a pinned stage where a
@@ -225,11 +226,7 @@ export default function Journey() {
     return () => mq.removeEventListener("change", sync);
   }, []);
   const { scrollYProgress: raw } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  // A function transform keeps every downstream value on Motion's own frame
-  // loop. Fed straight from useScroll, Motion hands them to the browser's
-  // native scroll timeline, which mis-maps multi-stop keyframes and left
-  // finished bands and shots visible on top of each other.
-  const scrollYProgress = useTransform(raw, (v) => v);
+  const scrollYProgress = useSmoothProgress(raw);
 
   // The window: a framed rectangle that opens to full bleed over the first
   // stretch, while the scrim and the opening caption arrive with it.

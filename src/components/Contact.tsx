@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 import { BRAND } from "@/data/brand";
 import { EASE } from "@/lib/motion";
+import { useSmoothProgress } from "@/lib/useSmoothProgress";
 
 /**
  * The one call to action the page funnels to. A static site has no backend, so
@@ -26,7 +27,8 @@ const rise = (delay = 0) => ({
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
   const [sent, setSent] = useState(false);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "start 0.3"] });
+  const { scrollYProgress: raw } = useScroll({ target: ref, offset: ["start end", "start 0.3"] });
+  const scrollYProgress = useSmoothProgress(raw);
   // The rule under the headline draws itself as the section arrives.
   const draw = useTransform(scrollYProgress, [0, 1], [0, 1], { clamp: true });
 

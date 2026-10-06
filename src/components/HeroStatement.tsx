@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { MotionValue, motion, useScroll, useTransform } from "framer-motion";
 
+import { useSmoothProgress } from "@/lib/useSmoothProgress";
+
 /* ─── scroll-animation text ──────────────────────────────────────────────── */
 
 const FULL_TEXT =
@@ -81,7 +83,7 @@ export default function HeroStatement() {
   // which the previous offset could not do — it finished colouring at the
   // moment the text arrived at centre, so the whole animation played on its
   // way up the lower half of the screen.
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: raw } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
@@ -90,6 +92,7 @@ export default function HeroStatement() {
   // the first word warms, and holds fully lit before the section lets go. That
   // trailing hold is what makes the stop read as deliberate rather than as the
   // page having stalled.
+  const scrollYProgress = useSmoothProgress(raw);
   const progress = useTransform(scrollYProgress, [0.1, 0.7], [0, 1], {
     clamp: true,
   });
