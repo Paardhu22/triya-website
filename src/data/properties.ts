@@ -96,7 +96,7 @@ export const properties: Property[] = [
     summary:
       "Forty-eight rooms and a rooftop kitchen, a short walk from the Gachibowli tech corridor.",
     description:
-      "Forty-eight rooms and a rooftop restaurant a short walk from the Gachibowli tech corridor. Built for short stays that still feel considered — fast check-in, quiet floors, and a kitchen that runs late enough for a flight that landed at midnight.",
+      "Forty-eight rooms and a rooftop restaurant a short walk from the Gachibowli tech corridor. Built for short stays that still feel considered: fast check-in, quiet floors, and a kitchen that runs late enough for a flight that landed at midnight.",
     stats: [
       { label: "Rooms", value: "48" },
       { label: "Opened", value: "2021" },
@@ -139,7 +139,7 @@ export const properties: Property[] = [
     summary:
       "Sixty beds around a mess kitchen and a rooftop that stays open past midnight.",
     description:
-      "Sixty beds across single and twin rooms, built around a mess kitchen and a rooftop that stays open past midnight. Kondapur Collective is priced for people early in a career, without cutting the parts that actually matter — the mattress, the water pressure, the Wi-Fi.",
+      "Sixty beds across single and twin rooms, built around a mess kitchen and a rooftop that stays open past midnight. Kondapur Collective is priced for people early in a career, without cutting the parts that actually matter: the mattress, the water pressure, the Wi-Fi.",
     stats: [
       { label: "Beds", value: "60" },
       { label: "Opened", value: "2020" },
@@ -180,7 +180,7 @@ export const properties: Property[] = [
     summary:
       "Thirty-six rooms set back from the main road, arranged around an internal garden.",
     description:
-      "Thirty-six rooms set back from the main road, built around a small internal garden. Triya Court trades scale for quiet — the kind of hotel you can hear yourself think in after a long day of meetings on the other side of the flyover.",
+      "Thirty-six rooms set back from the main road, built around a small internal garden. Triya Court trades scale for quiet: the kind of hotel you can hear yourself think in after a long day of meetings on the other side of the flyover.",
     stats: [
       { label: "Rooms", value: "36" },
       { label: "Opened", value: "2022" },
@@ -220,7 +220,7 @@ export const properties: Property[] = [
     summary:
       "Eighteen self-contained studios inside a converted residence, built for longer stays.",
     description:
-      "Eighteen self-contained studios inside a converted residence on a tree-lined street. The Annexe suits longer stays — a proper kitchenette in every room, a management team that answers the phone, and no shared corridors to negotiate.",
+      "Eighteen self-contained studios inside a converted residence on a tree-lined street. The Annexe suits longer stays: a proper kitchenette in every room, a management team that answers the phone, and no shared corridors to negotiate.",
     stats: [
       { label: "Studios", value: "18" },
       { label: "Opened", value: "2023" },
@@ -260,7 +260,7 @@ export const properties: Property[] = [
     summary:
       "Seventy-two rooms across nine floors, carrying the portfolio's full programme.",
     description:
-      "Seventy-two rooms across nine floors, anchoring the portfolio's largest address. Triya Pavilion carries the full programme — restaurant, bar, gym, pool and two event floors — for stays measured in weeks rather than nights.",
+      "Seventy-two rooms across nine floors, anchoring the portfolio's largest address. Triya Pavilion carries the full programme: restaurant, bar, gym, pool and two event floors, for stays measured in weeks rather than nights.",
     stats: [
       { label: "Rooms", value: "72" },
       { label: "Opened", value: "2024" },
@@ -306,7 +306,7 @@ export const properties: Property[] = [
     summary:
       "Thirty rooms wrapped around a planted deck, on the quiet edge of Kokapet.",
     description:
-      "Thirty rooms wrapped around a planted deck on the quiet edge of Kokapet. The Grove was designed around its shade — deep balconies, cross-ventilation on every floor, and a courtyard that stays usable through May.",
+      "Thirty rooms wrapped around a planted deck on the quiet edge of Kokapet. The Grove was designed around its shade: deep balconies, cross-ventilation on every floor, and a courtyard that stays usable through May.",
     stats: [
       { label: "Rooms", value: "30" },
       { label: "Opened", value: "2025" },
@@ -347,7 +347,7 @@ export const properties: Property[] = [
     summary:
       "Twenty-four rooms in a 1960s building, kept intact and brought back into use.",
     description:
-      "Twenty-four rooms in a 1960s building near the old airport road, kept intact and brought back into use. Triya Reserve is the smallest hotel in the group and the one with the most original detail left standing — terrazzo, teak, and a staircase worth the walk.",
+      "Twenty-four rooms in a 1960s building near the old airport road, kept intact and brought back into use. Triya Reserve is the smallest hotel in the group and the one with the most original detail left standing: terrazzo, teak, and a staircase worth the walk.",
     stats: [
       { label: "Rooms", value: "24" },
       { label: "Opened", value: "2023" },
@@ -393,7 +393,7 @@ export const categories: Category[] = [
     id: "residences",
     label: "Residences",
     blurb:
-      "Long-stay homes with meals, housekeeping and security folded into the rent — for people who moved here to work, not to keep house.",
+      "Long-stay homes with meals, housekeeping and security folded into the rent, for people who moved here to work, not to keep house.",
     image: placeholder("1787396032419-3f26e9710244", 1400),
   },
   {

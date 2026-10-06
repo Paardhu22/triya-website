@@ -364,3 +364,95 @@ html::-webkit-scrollbar {
     animation: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Journey stage: legibility over live imagery.
+   A global radial scrim so no frame is ever raw behind type, a bottom-left
+   scrim under the caption lane, and a three-layer text shadow.
+   -------------------------------------------------------------------------- */
+.journey-scrim {
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 40%, rgba(11, 11, 10, 0) 35%, rgba(11, 11, 10, 0.55) 100%),
+    linear-gradient(to top, rgba(11, 11, 10, 0.7) 0%, rgba(11, 11, 10, 0.25) 45%, rgba(11, 11, 10, 0) 70%);
+}
+
+.journey-band {
+  text-shadow:
+    0 1px 2px rgba(11, 11, 10, 0.9),
+    0 3px 12px rgba(11, 11, 10, 0.6),
+    0 10px 44px rgba(11, 11, 10, 0.6);
+}
+
+.journey-band .journey-cta {
+  text-shadow: none;
+}
+
+.journey-chip {
+  background: rgba(11, 11, 10, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+/* The one accent control: lifts and warms on hover, presses on click. */
+.journey-cta {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (hover: hover) {
+  .journey-cta:hover {
+    transform: translateY(-2px);
+    background-color: #a8461f;
+  }
+}
+
+.journey-cta:active {
+  transform: scale(0.97);
+}
+
+/* Soft terracotta glow behind the contact headline, breathing slowly. */
+.contact-glow {
+  background: radial-gradient(closest-side, rgba(194, 83, 44, 0.22), rgba(194, 83, 44, 0));
+  animation: glow-breathe 9s ease-in-out -3s infinite alternate;
+}
+
+@keyframes glow-breathe {
+  from { opacity: 0.55; transform: translateX(-50%) scale(0.92); }
+  to   { opacity: 1;    transform: translateX(-50%) scale(1.05); }
+}
+
+/* One environment for the whole page: a whisper of film grain drifting slowly
+   over everything, so scrolling feels like moving through one place. */
+.site-grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  will-change: transform;
+  animation: grain-drift 80s linear infinite;
+}
+
+@keyframes grain-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-160px, -160px, 0); }
+}
+
+/* Hidden tab: stop every loop. Not inherited, so it targets every node. */
+body.paused *,
+body.paused *::before,
+body.paused *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-grain,
+  .contact-glow,
+  .journey-cta {
+    animation: none;
+    transition: none;
+  }
+}

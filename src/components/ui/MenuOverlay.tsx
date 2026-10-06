@@ -20,25 +20,20 @@ import Logo from "./Logo";
  * globals.css) — the list dims around whatever you are pointing at.
  */
 
-// Placeholder destinations — every href is a section that does not exist yet.
+// Every destination is a section on this page.
 const PRIMARY = [
   { label: "Hotels", href: "#hotels" },
   { label: "Residences", href: "#residences" },
-  { label: "Properties", href: "#properties" },
   { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const SECONDARY = [
   [
-    { label: "Amenities", href: "#amenities" },
-    { label: "Locations", href: "#locations" },
-    { label: "Journal", href: "#journal" },
+    { label: "Portfolio", href: "#properties" },
+    { label: "Philosophy", href: "#about" },
   ],
-  [
-    { label: "Careers", href: "#careers" },
-    { label: "Press", href: "#press" },
-    { label: "Contact", href: "#contact" },
-  ],
+  [{ label: "Plan a visit", href: "#contact" }],
 ];
 
 export default function MenuOverlay({

@@ -67,7 +67,7 @@ function CategoryBand({
 
       <div className="relative flex min-h-[inherit] flex-col justify-between gap-12 px-5 py-8 sm:px-8 sm:py-12">
         <p className="text-[11px] font-medium tracking-[0.28em] text-white/55 uppercase">
-          {String(index + 1).padStart(2, "0")} —{" "}
+          {String(index + 1).padStart(2, "0")} ·{" "}
           {String(count).padStart(2, "0")} properties
         </p>
 

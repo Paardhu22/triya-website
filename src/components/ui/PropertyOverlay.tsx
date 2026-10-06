@@ -100,7 +100,7 @@ export default function PropertyOverlay({
                 className="section-shell absolute inset-x-0 bottom-0 pb-8 sm:pb-14"
               >
                 <p className="text-[10px] font-medium tracking-[0.28em] text-white/60 uppercase sm:text-[11px]">
-                  {property.location} — {property.kind}
+                  {property.location} · {property.kind}
                 </p>
                 <h2 className="mt-3 text-[clamp(1.9rem,6.5vw,5rem)] leading-[0.95] font-medium tracking-[-0.04em] text-white text-pretty">
                   {property.name}

@@ -20,6 +20,13 @@ export default function SmoothScrollProvider({
 }) {
   const lenisRef = useRef<Lenis | null>(null);
 
+  // Pause every CSS loop while the tab is hidden (see `body.paused` in globals.css).
+  useEffect(() => {
+    const sync = () => document.body.classList.toggle("paused", document.hidden);
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
   useEffect(() => {
     // Respect prefers-reduced-motion — no smooth scroll for these users.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

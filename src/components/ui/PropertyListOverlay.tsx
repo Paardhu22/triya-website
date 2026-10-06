@@ -202,7 +202,7 @@ function Band({
                   flipped ? "text-white/45" : "text-foreground/45",
                 )}
               >
-                {property.location} — {property.kind}
+                {property.location} · {property.kind}
               </p>
             </Rise>
 
@@ -313,7 +313,7 @@ export default function PropertyListOverlay({
                 transition={{ duration: 0.5, ease: EASE, delay: 0.45 }}
                 className="truncate text-[10px] font-medium tracking-[0.28em] text-white uppercase sm:text-[11px]"
               >
-                {label} — {String(items.length).padStart(2, "0")}
+                {label} · {String(items.length).padStart(2, "0")}
               </motion.span>
 
               <div className="pointer-events-auto -mr-3 shrink-0 sm:-mr-4">

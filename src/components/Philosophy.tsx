@@ -64,7 +64,7 @@ export default function Philosophy() {
             <p className={cn("mt-7 sm:mt-10", BODY)}>
               Every property is shaped through proportion, light, texture, and
               the way a day actually moves through a room. We believe a stay
-              should feel effortless — spaces that hold up to ordinary use and
+              should feel effortless: spaces that hold up to ordinary use and
               still feel considered on the hundredth morning.
             </p>
           </motion.div>
@@ -104,11 +104,10 @@ export default function Philosophy() {
             {...fadeUp(0.18)}
           >
             <p className={BODY}>
-              Elegance exists in the space between necessity and indulgence. Our
-              design ethos rejects the ephemeral in favor of the timeless,
-              utilizing clean geometric lines, organic materials, and deliberate
-              spatial flow to cultivate a poetic sense of belonging. We craft
-              sanctuaries that elevate the ritual of the everyday.
+              We keep the design plain on purpose. Clean lines, materials that
+              age well, and rooms laid out around how people actually live, so
+              a place still feels like yours after a year, not just on the
+              first night.
             </p>
           </motion.div>
         </div>
