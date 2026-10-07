@@ -125,13 +125,20 @@ const Shuffle = ({
     if (!el) return;
 
     let timer: ReturnType<typeof setTimeout>;
-    const sample = () =>
-      `${Math.round(el.getBoundingClientRect().width)}|${getComputedStyle(el).fontSize}`;
+    const sample = () => ({
+      width: el.getBoundingClientRect().width,
+      font: getComputedStyle(el).fontSize,
+    });
     let last = sample();
 
+    // Splitting into characters nudges a shrink-wrapped heading's width by a
+    // pixel or two (per-glyph rounding). That is not a resize, and treating it
+    // as one rebuilds the split mid-entrance and snaps the heading to its
+    // finished state — so only a real change in width or font size counts.
     const check = () => {
       const next = sample();
-      if (next === last) return;
+      if (next.font === last.font && Math.abs(next.width - last.width) < 6)
+        return;
       last = next;
       clearTimeout(timer);
       timer = setTimeout(() => setResizeKey((k) => k + 1), 150);
@@ -467,8 +474,18 @@ const Shuffle = ({
           if (odd.length) addTween(odd, 0);
           if (even.length) addTween(even, evenStart);
         } else {
-          strips.forEach((strip) => {
-            const d = Math.random() * maxDelay;
+          // Stratified rather than plain random: one slot per strip, shuffled,
+          // jittered inside its slot. A short word like "Hotels" otherwise
+          // can draw all its delays low and finish visibly sooner than a long
+          // one drawn from the same window.
+          const n = strips.length;
+          const slots = strips.map((_, i) => i);
+          for (let i = n - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [slots[i], slots[j]] = [slots[j], slots[i]];
+          }
+          strips.forEach((strip, i) => {
+            const d = ((slots[i] + Math.random()) / n) * maxDelay;
             const vars: gsap.TweenVars = { duration, ease, force3D: true };
             if (isVertical) {
               vars.y = parseFloat(strip.getAttribute("data-final-y") || "0");

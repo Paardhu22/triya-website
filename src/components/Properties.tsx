@@ -53,14 +53,15 @@ function CategoryBand({
          the image's hover scale, so on a narrow screen — where the blurb wraps
          to four lines — a fixed height would crop the CTA off the bottom
          instead of letting the band grow. */
-      className="group focus-ring relative block min-h-[62svh] w-full overflow-hidden rounded-2xl text-left md:min-h-[100svh]"
+      className="group focus-ring relative isolate block min-h-[62svh] w-full transform-gpu overflow-hidden rounded-2xl text-left [contain:paint] md:min-h-[100svh]"
     >
       <Image
         src={category.image}
         alt=""
         fill
         sizes="(max-width: 768px) 100vw, 50vw"
-        className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
+        loading="eager"
+        className="object-cover will-change-transform transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
       />
       {/* Dark enough that the type holds on any placeholder photograph. */}
       <div className="absolute inset-0 bg-ink/60 transition-colors duration-700 group-hover:bg-ink/50" />
@@ -76,13 +77,15 @@ function CategoryBand({
               size the same word could carry across the whole page. */}
           <Shuffle
             {...SHUFFLE_PRESET}
+            loop={false}
+            loopDelay={0}
             tag="h3"
             text={category.label}
             textAlign="left"
             className="text-[clamp(2.25rem,5.2vw,5rem)] leading-[0.9] font-bold tracking-[-0.045em] text-white uppercase"
           />
 
-          <p className="mt-5 max-w-[42ch] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-[1.6] tracking-[-0.01em] text-white/65 text-pretty sm:mt-6">
+          <p className="mt-5 max-w-[42ch] md:min-h-[6.4em] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-[1.6] tracking-[-0.01em] text-white/65 text-pretty sm:mt-6">
             {category.blurb}
           </p>
 

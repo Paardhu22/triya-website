@@ -45,6 +45,7 @@ export default function PropertyOverlay({
   property: Property | null;
   onClose: () => void;
 }) {
+  const photos = property?.gallery.slice(1) ?? [];
   return (
     <AnimatePresence>
       {property && (
@@ -75,7 +76,7 @@ export default function PropertyOverlay({
             className="no-scrollbar h-full overflow-y-auto overscroll-contain bg-background"
           >
             {/* Hero — the close button sits over this, so it stays white. */}
-            <div className="relative h-[62svh] min-h-[20rem] w-full overflow-hidden bg-line">
+            <div className="relative h-svh min-h-[26rem] w-full overflow-hidden bg-line">
               <motion.div
                 initial={{ scale: 1.12 }}
                 animate={{ scale: 1 }}
@@ -91,7 +92,7 @@ export default function PropertyOverlay({
                   className="object-cover"
                 />
               </motion.div>
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/15 to-ink/25" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/45" />
 
               <motion.div
                 initial={{ opacity: 0, y: 26 }}
@@ -108,13 +109,105 @@ export default function PropertyOverlay({
               </motion.div>
             </div>
 
-            <div className="section-shell pt-[max(3rem,9svh)] pb-[max(4rem,12svh)]">
+            {/* Gallery — first thing after the hero. Pairs of a wide and a
+                tall frame that swap sides each row; a lone last frame runs
+                full width. Each frame unveils on entry (clip + settle). */}
+            <section
+              aria-labelledby={`${property.slug}-photos`}
+              className="section-shell pt-[max(3rem,9svh)]"
+            >
+              <motion.div
+                {...reveal()}
+                className="flex items-baseline justify-between gap-6 border-b border-line pb-4"
+              >
+                <h3 id={`${property.slug}-photos`} className={EYEBROW}>
+                  Inside {property.name}
+                </h3>
+                <span className={cn(EYEBROW, "tabular-nums")}>
+                  {String(photos.length).padStart(2, "0")} photographs
+                </span>
+              </motion.div>
+
+              <div className="mt-8 grid gap-y-10 md:grid-cols-12 md:items-start md:gap-x-6 md:gap-y-[7svh]">
+                {photos.map((photo, i) => {
+                  const full = photos.length % 2 === 1 && i === photos.length - 1;
+                  const wide = (Math.floor(i / 2) + (i % 2)) % 2 === 0;
+                  return (
+                    <motion.figure
+                      key={photo.src}
+                      initial={{ opacity: 0, y: 36 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ duration: 0.9, ease: EASE, delay: (i % 2) * 0.12 }}
+                      className={cn(
+                        "group",
+                        full
+                          ? "md:col-span-12"
+                          : wide
+                            ? "md:col-span-7"
+                            : "md:col-span-5 md:mt-[6svh]",
+                      )}
+                    >
+                      <motion.div
+                        initial={{ clipPath: "inset(10% 0% 0% 0%)" }}
+                        whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 1.1, ease: EASE }}
+                        className={cn(
+                          "relative w-full overflow-hidden bg-line",
+                          full
+                            ? "aspect-[4/3] md:aspect-[21/9]"
+                            : wide
+                              ? "aspect-[4/3]"
+                              : "aspect-[4/5]",
+                        )}
+                      >
+                        <motion.div
+                          initial={{ scale: 1.12 }}
+                          whileInView={{ scale: 1 }}
+                          viewport={{ once: true, amount: 0.2 }}
+                          transition={{ duration: 1.4, ease: EASE }}
+                          className="absolute inset-0"
+                        >
+                          <Image
+                            src={photo.src}
+                            alt={photo.caption}
+                            fill
+                            sizes={
+                              full
+                                ? "100vw"
+                                : wide
+                                  ? "(max-width: 768px) 100vw, 58vw"
+                                  : "(max-width: 768px) 100vw, 42vw"
+                            }
+                            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                          />
+                        </motion.div>
+                      </motion.div>
+                      <figcaption className="mt-3 flex items-baseline justify-between gap-6 text-[13px] tracking-[-0.01em] text-foreground/65">
+                        {photo.caption}
+                        <span className="text-[11px] tracking-[0.2em] text-foreground/40 tabular-nums">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </figcaption>
+                    </motion.figure>
+                  );
+                })}
+              </div>
+            </section>
+
+            <div className="section-shell pt-[max(4rem,13svh)] pb-[max(4rem,12svh)]">
+              <motion.h3
+                {...reveal()}
+                className={cn(EYEBROW, "border-b border-line pb-4")}
+              >
+                The details
+              </motion.h3>
+
               {/* Statement + the numbers, side by side. */}
-              <div className="grid gap-y-12 sm:gap-y-14 md:grid-cols-12 md:gap-x-10">
+              <div className="mt-10 grid gap-y-12 sm:mt-14 sm:gap-y-14 md:grid-cols-12 md:gap-x-10">
                 <motion.div
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: EASE, delay: 0.45 }}
+                  {...reveal()}
                   className="md:col-span-7"
                 >
                   <p className="text-[clamp(1.2rem,2.4vw,2.1rem)] leading-[1.3] font-medium tracking-[-0.03em] text-pretty sm:leading-[1.25]">
@@ -126,9 +219,7 @@ export default function PropertyOverlay({
                 </motion.div>
 
                 <motion.dl
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: EASE, delay: 0.55 }}
+                  {...reveal(0.1)}
                   className="grid grid-cols-2 gap-x-6 gap-y-7 self-start sm:gap-x-8 sm:gap-y-8 md:col-span-4 md:col-start-9"
                 >
                   {property.stats.map((stat) => (
@@ -184,63 +275,6 @@ export default function PropertyOverlay({
                       </ul>
                     </motion.div>
                   ))}
-                </div>
-              </section>
-
-              {/* Gallery — rows alternate a wide frame and a tall one, and
-                  swap sides each row. Bottoms align, so the tall frame rises
-                  above its neighbour and the captions sit on one line. */}
-              <section
-                aria-labelledby={`${property.slug}-photos`}
-                className="mt-[max(3.5rem,11svh)]"
-              >
-                <motion.h3
-                  {...reveal()}
-                  id={`${property.slug}-photos`}
-                  className={EYEBROW}
-                >
-                  Inside {property.name}
-                </motion.h3>
-
-                <div className="mt-8 grid gap-y-12 md:grid-cols-12 md:items-end md:gap-x-6 md:gap-y-[9svh]">
-                  {property.gallery.slice(1).map((photo, i) => {
-                    const wide = (Math.floor(i / 2) + (i % 2)) % 2 === 0;
-                    return (
-                      <motion.figure
-                        key={photo.src}
-                        {...reveal()}
-                        className={cn(
-                          "group",
-                          wide ? "md:col-span-7" : "md:col-span-5",
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            "relative w-full overflow-hidden bg-line",
-                            wide ? "aspect-[4/3]" : "aspect-[4/5]",
-                          )}
-                        >
-                          <Image
-                            src={photo.src}
-                            alt={photo.caption}
-                            fill
-                            sizes={
-                              wide
-                                ? "(max-width: 768px) 100vw, 58vw"
-                                : "(max-width: 768px) 100vw, 42vw"
-                            }
-                            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                          />
-                        </div>
-                        <figcaption className="mt-3 flex items-baseline justify-between gap-6 text-[13px] tracking-[-0.01em] text-foreground/65">
-                          {photo.caption}
-                          <span className="text-[11px] tracking-[0.2em] text-foreground/40 tabular-nums">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                        </figcaption>
-                      </motion.figure>
-                    );
-                  })}
                 </div>
               </section>
 
