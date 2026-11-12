@@ -1,14 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import ClickSpark from "@/components/ui/ClickSpark";
 
 // Fallback for the licensed Gustavo face — see the @font-face block in globals.css.
-const archivo = Archivo({
+// Self-hosted (Archivo, SIL OFL, latin subset, variable weight) instead of next/font/google:
+// the Google loader failed Turbopack builds on Vercel, and this removes the build-time fetch.
+const archivo = localFont({
+  src: "./fonts/Archivo-latin-variable.woff2",
   variable: "--font-archivo",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400 700",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
