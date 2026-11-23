@@ -121,6 +121,18 @@ function CategoryBand({
 export default function Properties() {
   const [openKind, setOpenKind] = useState<PropertyKind | null>(null);
   const [openProperty, setOpenProperty] = useState<Property | null>(null);
+  // Listings that currently accept tenant registrations (mapped to a real property).
+  const [registerSlugs, setRegisterSlugs] = useState<string[]>([]);
+  useEffect(() => {
+    let live = true;
+    fetch("/api/register/availability")
+      .then((r) => (r.ok ? r.json() : { slugs: [] }))
+      .then((d: { slugs?: string[] }) => live && setRegisterSlugs(Array.isArray(d.slugs) ? d.slugs : []))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, []);
 
   const listItems = useMemo(
     () => (openKind ? byKind(openKind) : []),
@@ -190,6 +202,7 @@ export default function Properties() {
 
       <PropertyOverlay
         property={openProperty}
+        registrationOpen={openProperty ? registerSlugs.includes(openProperty.slug) : false}
         onClose={() => setOpenProperty(null)}
       />
     </section>

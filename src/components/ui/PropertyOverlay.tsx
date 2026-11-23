@@ -41,9 +41,12 @@ const EYEBROW =
 export default function PropertyOverlay({
   property,
   onClose,
+  registrationOpen = false,
 }: {
   property: Property | null;
   onClose: () => void;
+  /** True only when this listing is mapped to a real property that takes registrations. */
+  registrationOpen?: boolean;
 }) {
   const photos = property?.gallery.slice(1) ?? [];
   return (
@@ -300,6 +303,14 @@ export default function PropertyOverlay({
                     {BRAND.email}
                   </a>
                 </div>
+                {registrationOpen ? (
+                  <a
+                    href={`/register/${property.slug}`}
+                    className="focus-ring mt-8 inline-flex min-h-[54px] items-center bg-ink px-8 text-[11px] font-medium tracking-[0.28em] text-white uppercase"
+                  >
+                    Register as a tenant
+                  </a>
+                ) : null}
               </motion.div>
             </div>
           </div>
